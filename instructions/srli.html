@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SRLI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SRLI - Deslocamento Lógico à Direita com Imediato</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">srli rd, rs1, shamt</div>
+
+        <h2>Descrição</h2>
+        <p>Desloca logicamente o valor no registrador <code>rs1</code> para a direita pelo número de bits especificado no campo imediato <code>shamt</code> (shift amount, 5 bits), inserindo zeros nas posições vazias à esquerda, e armazena o resultado em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0010011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x5</code></div>
+            <div class="info-item"><strong>shamt:</strong> 5 bits (0-31)</div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = (unsigned)rs1 >> shamt</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Dividir por potência de 2 (números sem sinal)</h3>
+            <div class="example-code"># Dividir 100 por 4 (2^2)
+li x5, 100             # x5 = 100
+srli x6, x5, 2         # x6 = 25 (100 / 4)</div>
+            <div class="example-explanation">
+                SRLI é eficiente para divisão por potências de 2 quando o divisor é uma constante conhecida. Deslocar por 2 divide por 4.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Extrair byte superior</h3>
+            <div class="example-code"># Extrair o byte mais significativo
+li x10, 0xABCD1234     # x10 = 2882343476
+srli x11, x10, 24      # x11 = 0xAB = 171</div>
+            <div class="example-explanation">
+                Deslocar 24 bits à direita move o byte mais significativo para os 8 bits menos significativos, isolando-o efetivamente.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Processar campos de instrução</h3>
+            <div class="example-code"># Extrair opcode de uma instrução RISC-V (bits 0-6)
+# Supondo x20 contém uma instrução codificada
+srli x21, x20, 0       # não precisa deslocar
+andi x21, x21, 0x7F    # isola os 7 bits do opcode
+# Ou extrair rd (bits 7-11)
+srli x22, x20, 7       # move rd para LSB
+andi x22, x22, 0x1F    # isola 5 bits</div>
+            <div class="example-explanation">
+                SRLI é fundamental para decodificar instruções, permitindo extrair campos específicos da codificação de 32 bits.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O campo shamt é de 5 bits, permitindo valores de 0 a 31</li>
+            <li>Mais eficiente que SRL quando o valor de deslocamento é constante</li>
+            <li>Zeros são sempre inseridos à esquerda (deslocamento lógico)</li>
+            <li>Não preserva o sinal - use SRAI para números com sinal</li>
+            <li>Útil para extrair bytes e campos de bits de posições conhecidas</li>
+        </ul>
+    </div>
+</body>
+</html>

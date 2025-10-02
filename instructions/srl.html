@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SRL - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SRL - Deslocamento Lógico à Direita</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">srl rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Desloca logicamente o valor no registrador <code>rs1</code> para a direita pelo número de bits especificado nos 5 bits menos significativos de <code>rs2</code>, inserindo zeros nas posições vazias à esquerda, e armazena o resultado em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x5</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x00</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = (unsigned)rs1 >> (rs2 & 0x1F)</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Dividir por potência de 2 (números sem sinal)</h3>
+            <div class="example-code"># Dividir 80 por 4 (2^2)
+li x5, 80              # x5 = 80
+li x6, 2               # deslocar 2 posições
+srl x7, x5, x6         # x7 = 20 (80 / 4)</div>
+            <div class="example-explanation">
+                Deslocar à direita por N bits é equivalente a dividir por 2^N para números sem sinal. Neste caso, deslocar por 2 divide por 4.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Extrair byte específico</h3>
+            <div class="example-code"># Extrair o segundo byte (bits 8-15)
+li x10, 0xABCD1234     # valor de 32 bits
+li x11, 8              # deslocar 8 bits
+srl x12, x10, x11      # x12 = 0x00ABCD12
+andi x12, x12, 0xFF    # x12 = 0x12 (segundo byte)</div>
+            <div class="example-explanation">
+                Combinando SRL com ANDI, podemos extrair bytes específicos de uma palavra. Primeiro deslocamos o byte desejado para a posição inferior, depois isolamos com máscara.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Processar campos de bits</h3>
+            <div class="example-code"># Extrair campo de 4 bits na posição 12
+li x20, 0xABCD         # valor com campos
+li x21, 12             # posição do campo
+srl x22, x20, x21      # desloca campo para LSB
+andi x22, x22, 0xF     # isola os 4 bits (x22 = 0xA)</div>
+            <div class="example-explanation">
+                Útil para decodificar estruturas com múltiplos campos de bits, como instruções ou registradores de controle.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Apenas os 5 bits menos significativos de rs2 são usados (valores de 0 a 31)</li>
+            <li>Zeros são sempre inseridos à esquerda (deslocamento lógico, não aritmético)</li>
+            <li>Bits que saem pela direita são descartados</li>
+            <li>Útil para divisão por potências de 2 de números sem sinal</li>
+            <li>Para números com sinal, use SRA em vez de SRL</li>
+        </ul>
+    </div>
+</body>
+</html>

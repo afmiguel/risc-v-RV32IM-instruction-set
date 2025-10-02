@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução ORI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>ORI - Operação OU bit a bit com Imediato</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">ori rd, rs1, imm</div>
+
+        <h2>Descrição</h2>
+        <p>Executa a operação lógica OR bit a bit entre o valor no registrador <code>rs1</code> e um valor imediato de 12 bits com extensão de sinal, armazenando o resultado no registrador <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0010011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x6</code></div>
+            <div class="info-item"><strong>funct7:</strong> N/A</div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = rs1 | sign_extend(imm[11:0])</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Setar bits específicos</h3>
+            <div class="example-code"># Setar os bits 0, 2 e 4
+li x5, 0x100           # x5 = 256 (binário: 100000000)
+ori x6, x5, 0x15       # x6 = 277 (binário: 100010101)</div>
+            <div class="example-explanation">
+                O ORI é usado para forçar bits específicos para 1. Neste exemplo, os bits nas posições 0, 2 e 4 (máscara 0x15 = 10101) são setados.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Criar máscara com bits inferiores</h3>
+            <div class="example-code"># Garantir que os 4 bits inferiores estejam setados
+li x10, 0xAB0          # x10 = 2736
+ori x11, x10, 0xF      # x11 = 0xABF = 2751</div>
+            <div class="example-explanation">
+                Útil para garantir que certos bits estejam sempre em 1, independente do valor original do registrador.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Copiar registrador (com OR zero)</h3>
+            <div class="example-code"># Copiar valor de x5 para x6
+ori x6, x5, 0          # x6 = x5 | 0 = x5</div>
+            <div class="example-explanation">
+                Fazer OR com zero não altera o valor, criando uma cópia. Embora menos comum que MV (que é um pseudo-instrução para ADDI), ainda é válido.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O valor imediato é de 12 bits e passa por extensão de sinal para 32 bits</li>
+            <li>Um bit no resultado será 1 se pelo menos um dos operandos tiver 1 naquela posição</li>
+            <li>Comumente usado para setar flags e bits de controle em registradores</li>
+            <li>Útil em programação de dispositivos de I/O e configuração de periféricos</li>
+        </ul>
+    </div>
+</body>
+</html>

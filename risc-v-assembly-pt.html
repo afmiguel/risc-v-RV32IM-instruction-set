@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referência de Assembly RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --hover-bg-color: #e3f2fd;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --highlight-color: #bbdefb;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: none;
+            margin-bottom: 0.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 2em;
+            font-size: 0.9em;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 2em;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--header-bg-color);
+            font-weight: 500;
+            color: var(--header-color);
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: var(--hover-bg-color);
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .param {
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            color: #c0392b;
+        }
+
+        .register-table {
+            text-align: center;
+            table-layout: fixed;
+        }
+
+        .register-table td {
+            padding: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.28em;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        /* Cores por função dos registradores */
+        .reg-zero { color: #7f8c8d; font-weight: bold; } /* Zero constant - cinza */
+        .reg-ra { color: #e74c3c; font-weight: bold; } /* Return address - vermelho */
+        .reg-sp { color: #9b59b6; font-weight: bold; } /* Stack pointer - roxo */
+        .reg-gp { color: #34495e; font-weight: bold; } /* Global pointer - cinza escuro */
+        .reg-tp { color: #16a085; font-weight: bold; } /* Thread pointer - verde-azulado */
+        .reg-temp { color: #3498db; font-weight: bold; } /* Temporaries (t0-t6) - azul */
+        .reg-saved { color: #27ae60; font-weight: bold; } /* Saved registers (s0-s11) - verde */
+        .reg-args { color: #e67e22; font-weight: bold; } /* Function arguments (a0-a7) - laranja */
+
+        .register-tables-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        .csr-table {
+            font-size: 1.28em;
+            table-layout: fixed;
+        }
+
+        .csr-table td {
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            border: 1px solid var(--border-color);
+            width: 16.66%;
+        }
+
+        .inst-col {
+            width: 270px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .inst-col code {
+            font-size: 1.35em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .inst-col code:hover {
+            background-color: var(--highlight-color);
+        }
+
+        /* Cores de categoria - tons pastéis suaves */
+        .category-arithmetic {
+            background-color: #fff5e6;
+        }
+
+        .category-logic {
+            background-color: #e8f5e9;
+        }
+
+        .category-shift {
+            background-color: #e3f2fd;
+        }
+
+        .category-header {
+            font-weight: 700;
+            color: var(--header-color);
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .category-header-arithmetic {
+            background-color: #fff5e6;
+        }
+
+        .category-header-logic {
+            background-color: #e8f5e9;
+        }
+
+        .category-header-shift {
+            background-color: #e3f2fd;
+        }
+
+        /* Cores para outras categorias */
+        .category-jump {
+            background-color: #fff3e0;
+        }
+
+        .category-header-jump {
+            background-color: #fff3e0;
+        }
+
+        .category-interrupt {
+            background-color: #fce4ec;
+        }
+
+        .category-header-interrupt {
+            background-color: #fce4ec;
+        }
+
+        .category-compare {
+            background-color: #f3e5f5;
+        }
+
+        .category-header-compare {
+            background-color: #f3e5f5;
+        }
+
+        .category-branch {
+            background-color: #e1f5fe;
+        }
+
+        .category-header-branch {
+            background-color: #e1f5fe;
+        }
+
+        .category-move {
+            background-color: #e8f5e9;
+        }
+
+        .category-header-move {
+            background-color: #e8f5e9;
+        }
+
+        .category-load {
+            background-color: #e3f2fd;
+        }
+
+        .category-header-load {
+            background-color: #e3f2fd;
+        }
+
+        .category-store {
+            background-color: #fff9c4;
+        }
+
+        .category-header-store {
+            background-color: #fff9c4;
+        }
+
+        .category-csr {
+            background-color: #f1f8e9;
+        }
+
+        .category-header-csr {
+            background-color: #f1f8e9;
+        }
+
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.85em;
+            }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.4em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cartão de Referência de Instruções Assembly RV32IM</h1>
+
+        <h2>Registradores RV32IM (prefixo x) e seus aliases</h2>
+        <div class="register-tables-container">
+            <table class="register-table">
+                <tbody>
+                    <tr>
+                        <td>x0</td><td>x1</td><td>x2</td><td>x3</td><td>x4</td><td>x5</td><td>x6</td><td>x7</td>
+                        <td>x8</td><td>x9</td><td>x10</td><td>x11</td><td>x12</td><td>x13</td><td>x14</td><td>x15</td>
+                    </tr>
+                    <tr>
+                        <td><code class="reg-zero">zero</code></td><td><code class="reg-ra">ra</code></td><td><code class="reg-sp">sp</code></td><td><code class="reg-gp">gp</code></td>
+                        <td><code class="reg-tp">tp</code></td><td><code class="reg-temp">t0</code></td><td><code class="reg-temp">t1</code></td><td><code class="reg-temp">t2</code></td>
+                        <td><code class="reg-saved">s0</code></td><td><code class="reg-saved">s1</code></td><td><code class="reg-args">a0</code></td><td><code class="reg-args">a1</code></td>
+                        <td><code class="reg-args">a2</code></td><td><code class="reg-args">a3</code></td><td><code class="reg-args">a4</code></td><td><code class="reg-args">a5</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="register-table">
+                <tbody>
+                    <tr>
+                        <td>x16</td><td>x17</td><td>x18</td><td>x19</td><td>x20</td><td>x21</td><td>x22</td><td>x23</td>
+                        <td>x24</td><td>x25</td><td>x26</td><td>x27</td><td>x28</td><td>x29</td><td>x30</td><td>x31</td>
+                    </tr>
+                    <tr>
+                        <td><code class="reg-args">a6</code></td><td><code class="reg-args">a7</code></td><td><code class="reg-saved">s2</code></td><td><code class="reg-saved">s3</code></td>
+                        <td><code class="reg-saved">s4</code></td><td><code class="reg-saved">s5</code></td><td><code class="reg-saved">s6</code></td><td><code class="reg-saved">s7</code></td>
+                        <td><code class="reg-saved">s8</code></td><td><code class="reg-saved">s9</code></td><td><code class="reg-saved">s10</code></td><td><code class="reg-saved">s11</code></td>
+                        <td><code class="reg-temp">t3</code></td><td><code class="reg-temp">t4</code></td><td><code class="reg-temp">t5</code></td><td><code class="reg-temp">t6</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Principais Registradores de Status e Controle</h2>
+        <table class="csr-table">
+            <thead>
+                <tr>
+                    <th colspan="6">CSRs</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>mtvec</code></td>
+                    <td><code>mepc</code></td>
+                    <td><code>mcause</code></td>
+                    <td><code>mtval</code></td>
+                    <td><code>mstatus</code></td>
+                    <td><code>mscratch</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="csr-table">
+            <thead>
+                <tr>
+                    <th colspan="6">Campos de mstatus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>mie</code></td>
+                    <td><code>mpie</code></td>
+                    <td><code>mip</code></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Instruções de Lógica, Deslocamento e Aritmética</h2>
+        <table>
+            <tbody>
+                <!-- Categoria: Aritmética -->
+                <tr class="category-header category-header-arithmetic">
+                    <td colspan="2">Instruções Aritméticas</td>
+                </tr>
+                <tr class="category-arithmetic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/add.html'">add rd, rs1, rs2</code></td>
+                    <td>Adiciona os valores em <span class="param">rs1</span> e <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-arithmetic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/addi.html'">addi rd, rs1, imm</code></td>
+                    <td>Adiciona o valor em <span class="param">rs1</span> ao valor imediato <span class="param">imm</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-arithmetic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/div.html'">div{u} rd, rs1, rs2</code></td>
+                    <td>Divide o valor em <span class="param">rs1</span> pelo valor em <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>. O sufixo U é opcional e deve ser usado para indicar que os valores em <span class="param">rs1</span> e <span class="param">rs2</span> são sem sinal (unsigned).</td>
+                </tr>
+                <tr class="category-arithmetic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/mul.html'">mul rd, rs1, rs2</code></td>
+                    <td>Multiplica os valores em <span class="param">rs1</span> e <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-arithmetic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/rem.html'">rem{u} rd, rs1, rs2</code></td>
+                    <td>Calcula o resto da divisão do valor em <span class="param">rs1</span> pelo valor em <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>. O sufixo U é opcional e deve ser usado para indicar que os valores em <span class="param">rs1</span> e <span class="param">rs2</span> são sem sinal (unsigned).</td>
+                </tr>
+                <tr class="category-arithmetic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/sub.html'">sub rd, rs1, rs2</code></td>
+                    <td>Subtrai o valor em <span class="param">rs2</span> do valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+
+                <!-- Categoria: Lógica -->
+                <tr class="category-header category-header-logic">
+                    <td colspan="2">Instruções Lógicas</td>
+                </tr>
+                <tr class="category-logic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/and.html'">and rd, rs1, rs2</code></td>
+                    <td>Executa a operação bit a bit "and" em <span class="param">rs1</span> e <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-logic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/andi.html'">andi rd, rs1, imm</code></td>
+                    <td>Executa a operação bit a bit "and" em <span class="param">rs1</span> e <span class="param">imm</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-logic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/or.html'">or rd, rs1, rs2</code></td>
+                    <td>Executa a operação bit a bit "or" em <span class="param">rs1</span> e <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-logic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/ori.html'">ori rd, rs1, imm</code></td>
+                    <td>Executa a operação bit a bit "or" em <span class="param">rs1</span> e <span class="param">imm</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-logic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/xor.html'">xor rd, rs1, rs2</code></td>
+                    <td>Executa a operação bit a bit "xor" em <span class="param">rs1</span> e <span class="param">rs2</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+                <tr class="category-logic">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/xori.html'">xori rd, rs1, imm</code></td>
+                    <td>Executa a operação bit a bit "xor" em <span class="param">rs1</span> e <span class="param">imm</span> e armazena o resultado em <span class="param">rd</span>.</td>
+                </tr>
+
+                <!-- Categoria: Deslocamento -->
+                <tr class="category-header category-header-shift">
+                    <td colspan="2">Instruções de Deslocamento</td>
+                </tr>
+                <tr class="category-shift">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/sll.html'">sll rd, rs1, rs2</code></td>
+                    <td>Executa um deslocamento lógico para esquerda no valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>. A quantidade de deslocamentos à esquerda é indicada pelo valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-shift">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/slli.html'">slli rd, rs1, imm</code></td>
+                    <td>Executa um deslocamento lógico para esquerda no valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>. A quantidade de deslocamentos à esquerda é indicada pelo valor imediato <span class="param">imm</span>.</td>
+                </tr>
+                <tr class="category-shift">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/sra.html'">sra rd, rs1, rs2</code></td>
+                    <td>Executa um deslocamento aritmético para direita no valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>. A quantidade de deslocamentos à direita é indicada pelo valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-shift">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/srai.html'">srai rd, rs1, imm</code></td>
+                    <td>Executa um deslocamento aritmético para direita no valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>. A quantidade de deslocamentos à direita é indicada pelo valor imediato <span class="param">imm</span>.</td>
+                </tr>
+                <tr class="category-shift">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/srl.html'">srl rd, rs1, rs2</code></td>
+                    <td>Executa um deslocamento lógico para direita no valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>. A quantidade de deslocamentos à direita é indicada pelo valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-shift">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/srli.html'">srli rd, rs1, imm</code></td>
+                    <td>Executa um deslocamento lógico para direita no valor em <span class="param">rs1</span> e armazena o resultado em <span class="param">rd</span>. A quantidade de deslocamentos à direita é indicada pelo valor imediato <span class="param">imm</span>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Instruções de Fluxo de Controle Incondicional</h2>
+        <table>
+            <tbody>
+                <!-- Categoria: Saltos -->
+                <tr class="category-header category-header-jump">
+                    <td colspan="2">Instruções de Salto</td>
+                </tr>
+                <tr class="category-jump">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/j.html'">j lab</code></td>
+                    <td>Salta para o endereço indicado pelo rótulo <span class="param">lab</span> (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-jump">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/jal-pseudo.html'">jal lab</code></td>
+                    <td>Armazena o endereço de retorno (PC+4) no registrador de retorno (<span class="param">ra</span>), então salta para o rótulo <span class="param">lab</span> (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-jump">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/jal.html'">jal rd, lab</code></td>
+                    <td>Armazena o endereço de retorno (PC+4) no registrador <span class="param">rd</span>, então salta para o rótulo <span class="param">lab</span>.</td>
+                </tr>
+                <tr class="category-jump">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/jalr.html'">jalr rd, rs1, imm</code></td>
+                    <td>Armazena o endereço de retorno (PC+4) no registrador <span class="param">rd</span>, então salta para o endereço calculado adicionando o valor imediato <span class="param">imm</span> ao valor no registrador <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-jump">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/jr.html'">jr rs1</code></td>
+                    <td>Salta para o endereço armazenado no registrador <span class="param">rs1</span> (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-jump">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/ret.html'">ret</code></td>
+                    <td>Salta para o endereço armazenado no registrador de retorno (<span class="param">ra</span>) (Pseudo-instrução).</td>
+                </tr>
+
+                <!-- Categoria: Interrupções -->
+                <tr class="category-header category-header-interrupt">
+                    <td colspan="2">Instruções de Interrupção</td>
+                </tr>
+                <tr class="category-interrupt">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/ecall.html'">ecall</code></td>
+                    <td>Gera uma interrupção de software. Usado para realizar chamadas de sistema.</td>
+                </tr>
+                <tr class="category-interrupt">
+                    <td class="inst-col"><code onclick="window.location.href='instructions/mret.html'">mret</code></td>
+                    <td>Retorna de um manipulador de interrupção.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Instruções de Configuração e Fluxo de Controle Condicional</h2>
+        <table>
+            <tbody>
+                <!-- Categoria: Desvios Condicionais -->
+                <tr class="category-header category-header-branch">
+                    <td colspan="2">Instruções de Desvio Condicional</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>beq rs1, rs2, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor em <span class="param">rs1</span> for igual ao valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>beqz rs1, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor em <span class="param">rs1</span> for igual a zero (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>bge rs1, rs2, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor com sinal em <span class="param">rs1</span> for maior ou igual ao valor com sinal em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>bgeu rs1, rs2, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor sem sinal em <span class="param">rs1</span> for maior ou igual ao valor sem sinal em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>blt rs1, rs2, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor com sinal em <span class="param">rs1</span> for menor que o valor com sinal em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>bltu rs1, rs2, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor sem sinal em <span class="param">rs1</span> for menor que o valor sem sinal em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>bne rs1, rs2, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor em <span class="param">rs1</span> for diferente do valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-branch">
+                    <td class="inst-col"><code>bnez rs1, lab</code></td>
+                    <td>Salta para o rótulo <span class="param">lab</span> se o valor em <span class="param">rs1</span> não for igual a zero (Pseudo-instrução).</td>
+                </tr>
+
+                <!-- Categoria: Comparações -->
+                <tr class="category-header category-header-compare">
+                    <td colspan="2">Instruções de Comparação</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>seqz rd, rs1</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor em <span class="param">rs1</span> for igual a zero, caso contrário, configura com 0 (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>sgtz rd, rs1</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor com sinal em <span class="param">rs1</span> for maior que zero, caso contrário, configura com 0 (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>slt rd, rs1, rs2</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor com sinal em <span class="param">rs1</span> for menor que o valor com sinal em <span class="param">rs2</span>, caso contrário, configura com 0.</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>slti rd, rs1, imm</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor com sinal em <span class="param">rs1</span> for menor que o valor imediato com extensão de sinal <span class="param">imm</span>, caso contrário, configura com 0.</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>sltiu rd, rs1, imm</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor sem sinal em <span class="param">rs1</span> for menor que o valor imediato sem sinal <span class="param">imm</span>, caso contrário, configura com 0.</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>sltu rd, rs1, rs2</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor sem sinal em <span class="param">rs1</span> for menor que o valor sem sinal em <span class="param">rs2</span>, caso contrário, configura com 0.</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>sltz rd, rs1</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor com sinal em <span class="param">rs1</span> for menor que zero, caso contrário, configura com 0 (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-compare">
+                    <td class="inst-col"><code>snez rd, rs1</code></td>
+                    <td>Configura <span class="param">rd</span> com 1 se o valor em <span class="param">rs1</span> não for igual a zero, caso contrário, configura com 0 (Pseudo-instrução).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Instruções de Movimentação de Dados</h2>
+        <table>
+            <tbody>
+                <!-- Categoria: Carga de Dados -->
+                <tr class="category-header category-header-load">
+                    <td colspan="2">Instruções de Carga</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>la rd, rot</code></td>
+                    <td>Carrega o endereço do rótulo <span class="param">rot</span> no registrador <span class="param">rd</span> (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>lb rd, imm(rs1)</code></td>
+                    <td>Carrega um byte de 8 bits com sinal da memória para o registrador <span class="param">rd</span>. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>lbu rd, imm(rs1)</code></td>
+                    <td>Carrega um byte de 8 bits sem sinal da memória para o registrador <span class="param">rd</span>. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>lh rd, imm(rs1)</code></td>
+                    <td>Carrega uma meia palavra (halfword) de 16 bits com sinal da memória para o registrador <span class="param">rd</span>. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>lhu rd, imm(rs1)</code></td>
+                    <td>Carrega uma meia palavra (halfword) de 16 bits sem sinal da memória para o registrador <span class="param">rd</span>. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>li rd, imm</code></td>
+                    <td>Carrega o valor imediato <span class="param">imm</span> no registrador <span class="param">rd</span> (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>lw rd, imm(rs1)</code></td>
+                    <td>Carrega uma palavra de 32 bits com ou sem sinal da memória para o registrador <span class="param">rd</span>. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-load">
+                    <td class="inst-col"><code>L{W|H|HU|B|BU} rd, lab</code></td>
+                    <td>Para cada uma das instruções de máquina lw, lh, lhu, lb e lbu existe uma pseudo-instrução que executa a mesma operação, mas o endereço de memória é calculado com base em um rótulo (<span class="param">lab</span>) (Pseudo-instrução).</td>
+                </tr>
+
+                <!-- Categoria: Movimentação -->
+                <tr class="category-header category-header-move">
+                    <td colspan="2">Instruções de Movimentação</td>
+                </tr>
+                <tr class="category-move">
+                    <td class="inst-col"><code>mv rd, rs</code></td>
+                    <td>Copia o valor do registrador <span class="param">rs</span> para o registrador <span class="param">rd</span> (Pseudo-instrução).</td>
+                </tr>
+
+                <!-- Categoria: Armazenamento -->
+                <tr class="category-header category-header-store">
+                    <td colspan="2">Instruções de Armazenamento</td>
+                </tr>
+                <tr class="category-store">
+                    <td class="inst-col"><code>sb rs1, imm(rs2)</code></td>
+                    <td>Armazena os 8 bits menos significativos do registrador <span class="param">rs1</span> na memória. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-store">
+                    <td class="inst-col"><code>sh rs1, imm(rs2)</code></td>
+                    <td>Armazena os 16 bits menos significativos do registrador <span class="param">rs1</span> na memória. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-store">
+                    <td class="inst-col"><code>sw rs1, imm(rs2)</code></td>
+                    <td>Armazena o valor de 32 bits no registrador <span class="param">rs1</span> na memória. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs2</span>.</td>
+                </tr>
+                <tr class="category-store">
+                    <td class="inst-col"><code>S{W|H|B} rs, lab</code></td>
+                    <td>Para cada uma das instruções de máquina sw, sh e sb existe uma pseudo-instrução que executa a mesma operação, mas o endereço de memória é calculado com base em um rótulo (<span class="param">lab</span>) (Pseudo-instrução).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Instruções de Leitura e Escrita de Controle e Status</h2>
+        <table>
+            <tbody>
+                <!-- Categoria: CSR -->
+                <tr class="category-header category-header-csr">
+                    <td colspan="2">Instruções de CSR</td>
+                </tr>
+                <tr class="category-csr">
+                    <td class="inst-col"><code>csrc csr, rs</code></td>
+                    <td>Limpa bits do registrador de controle e status (<span class="param">csr</span>) usando o conteúdo do registrador <span class="param">rs</span> como uma máscara de bits (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-csr">
+                    <td class="inst-col"><code>csrr rd, csr</code></td>
+                    <td>Copia o valor do registrador de controle e status <span class="param">csr</span> para o registrador <span class="param">rd</span> (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-csr">
+                    <td class="inst-col"><code>csrrw rd, csr, rs1</code></td>
+                    <td>Copia o valor do registrador de controle e status <span class="param">csr</span> para o registrador <span class="param">rd</span> e o valor do registrador <span class="param">rs1</span> para o registrador de controle e status <span class="param">csr</span>. Se <span class="param">rd</span>=<span class="param">rs1</span>, a instrução executa uma troca atômica entre os registradores <span class="param">csr</span> e <span class="param">rs1</span>.</td>
+                </tr>
+                <tr class="category-csr">
+                    <td class="inst-col"><code>csrs csr, rs</code></td>
+                    <td>Configura bits do registrador de controle e status (<span class="param">csr</span>) usando o conteúdo do registrador <span class="param">rs</span> como uma máscara de bits (Pseudo-instrução).</td>
+                </tr>
+                <tr class="category-csr">
+                    <td class="inst-col"><code>csrw csr, rs</code></td>
+                    <td>Copia o valor do registrador <span class="param">rs</span> para o registrador de controle e status <span class="param">csr</span> (Pseudo-instrução).</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

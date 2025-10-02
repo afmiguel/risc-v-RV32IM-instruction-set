@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SUB - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SUB - Subtração</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sub rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Subtrai o valor no registrador <code>rs2</code> do valor no registrador <code>rs1</code>, armazenando o resultado no registrador <code>rd</code>. A operação ignora overflow aritmético.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x0</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x20</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = rs1 - rs2</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Subtração simples</h3>
+            <div class="example-code"># Subtrair dois números
+li x5, 100             # x5 = 100
+li x6, 42              # x6 = 42
+sub x7, x5, x6         # x7 = 58 (100 - 42)</div>
+            <div class="example-explanation">
+                Operação básica de subtração: subtrai o segundo operando do primeiro e armazena o resultado.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Calcular diferença entre ponteiros</h3>
+            <div class="example-code"># Calcular distância entre dois endereços
+la x10, end_array      # x10 = endereço final
+la x11, start_array    # x11 = endereço inicial
+sub x12, x10, x11      # x12 = tamanho em bytes</div>
+            <div class="example-explanation">
+                Útil para calcular o tamanho de um array ou a diferença entre dois ponteiros em memória.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Implementar negação</h3>
+            <div class="example-code"># Negar um valor (obter -x)
+li x20, 42             # x20 = 42
+sub x21, zero, x20     # x21 = 0 - 42 = -42</div>
+            <div class="example-explanation">
+                Subtrair um valor de zero resulta na sua negação. Esta é a implementação da pseudo-instrução NEG.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Não gera exceção em caso de overflow - o resultado simplesmente "envolve" (wrap around)</li>
+            <li>Funciona tanto para números com sinal quanto sem sinal</li>
+            <li>Não existe SUBI - use ADDI com valor negativo para subtrair constantes</li>
+            <li>SUB rd, rs, rs sempre resulta em zero (x - x = 0)</li>
+            <li>SUB rd, zero, rs nega o valor de rs (0 - x = -x)</li>
+        </ul>
+    </div>
+</body>
+</html>

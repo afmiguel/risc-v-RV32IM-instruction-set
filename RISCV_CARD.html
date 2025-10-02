@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RISC-V Reference Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --hover-bg-color: #e3f2fd;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --highlight-color: #bbdefb;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+        
+        h1 {
+            text-align: center;
+            border-bottom: none;
+            margin-bottom: 1em;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 2em;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            word-break: break-word;
+        }
+
+        th {
+            background-color: var(--header-bg-color);
+            font-weight: 500;
+            color: var(--header-color);
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+        
+        tbody tr {
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: var(--hover-bg-color);
+        }
+
+        code, pre {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Interactive Bitfield Table Styles */
+        .bitfield-table {
+            table-layout: fixed;
+            text-align: center;
+        }
+        .bitfield-table th {
+            font-size: 0.8em;
+            padding: 8px 0;
+            text-transform: none;
+        }
+        .bitfield-table td {
+            border: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+            font-family: 'Fira Code', monospace;
+        }
+        .bitfield-table td:hover {
+            background-color: var(--highlight-color);
+            cursor: pointer;
+        }
+        .bit-header.highlight {
+            background-color: var(--highlight-color);
+        }
+        .type-col {
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.4em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RISC-V Reference Card</h1>
+
+        <h2>Core Instruction Formats</h2>
+        <table class="bitfield-table" id="bitfield-table">
+            <thead>
+                <tr>
+                    <th class="bit-header" data-bit="31">31</th><th class="bit-header" data-bit="30">30</th><th class="bit-header" data-bit="29">29</th><th class="bit-header" data-bit="28">28</th><th class="bit-header" data-bit="27">27</th><th class="bit-header" data-bit="26">26</th><th class="bit-header" data-bit="25">25</th>
+                    <th class="bit-header" data-bit="24">24</th><th class="bit-header" data-bit="23">23</th><th class="bit-header" data-bit="22">22</th><th class="bit-header" data-bit="21">21</th><th class="bit-header" data-bit="20">20</th>
+                    <th class="bit-header" data-bit="19">19</th><th class="bit-header" data-bit="18">18</th><th class="bit-header" data-bit="17">17</th><th class="bit-header" data-bit="16">16</th><th class="bit-header" data-bit="15">15</th>
+                    <th class="bit-header" data-bit="14">14</th><th class="bit-header" data-bit="13">13</th><th class="bit-header" data-bit="12">12</th>
+                    <th class="bit-header" data-bit="11">11</th><th class="bit-header" data-bit="10">10</th><th class="bit-header" data-bit="9">9</th><th class="bit-header" data-bit="8">8</th><th class="bit-header" data-bit="7">7</th>
+                    <th class="bit-header" data-bit="6">6</th><th class="bit-header" data-bit="5">5</th><th class="bit-header" data-bit="4">4</th><th class="bit-header" data-bit="3">3</th><th class="bit-header" data-bit="2">2</th><th class="bit-header" data-bit="1">1</th><th class="bit-header" data-bit="0">0</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="7" data-bits="31-25">funct7</td><td colspan="5" data-bits="24-20">rs2</td><td colspan="5" data-bits="19-15">rs1</td><td colspan="3" data-bits="14-12">funct3</td><td colspan="5" data-bits="11-7">rd</td><td colspan="7" data-bits="6-0">opcode</td><td class="type-col">R</td>
+                </tr>
+                <tr>
+                    <td colspan="12" data-bits="31-20">imm[11:0]</td><td colspan="5" data-bits="19-15">rs1</td><td colspan="3" data-bits="14-12">funct3</td><td colspan="5" data-bits="11-7">rd</td><td colspan="7" data-bits="6-0">opcode</td><td class="type-col">I</td>
+                </tr>
+                <tr>
+                    <td colspan="7" data-bits="31-25">imm[11:5]</td><td colspan="5" data-bits="24-20">rs2</td><td colspan="5" data-bits="19-15">rs1</td><td colspan="3" data-bits="14-12">funct3</td><td colspan="5" data-bits="11-7">imm[4:0]</td><td colspan="7" data-bits="6-0">opcode</td><td class="type-col">S</td>
+                </tr>
+                <tr>
+                    <td colspan="7" data-bits="31-25">imm[12|10:5]</td><td colspan="5" data-bits="24-20">rs2</td><td colspan="5" data-bits="19-15">rs1</td><td colspan="3" data-bits="14-12">funct3</td><td colspan="5" data-bits="11-7">imm[4:1|11]</td><td colspan="7" data-bits="6-0">opcode</td><td class="type-col">B</td>
+                </tr>
+                <tr>
+                    <td colspan="20" data-bits="31-12">imm[31:12]</td><td colspan="5" data-bits="11-7">rd</td><td colspan="7" data-bits="6-0">opcode</td><td class="type-col">U</td>
+                </tr>
+                 <tr>
+                    <td colspan="20" data-bits="31-12">imm[20|10:1|11|19:12]</td><td colspan="5" data-bits="11-7">rd</td><td colspan="7" data-bits="6-0">opcode</td><td class="type-col">J</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>RV32I Base Integer Instructions</h2>
+        <table>
+            <thead>
+                <tr><th>Inst</th><th>Name</th><th>FMT</th><th>Opcode</th><th>funct3</th><th>funct7</th><th>Description (C)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>add</td><td>ADD</td><td>R</td><td><code>0110011</code></td><td><code>0x0</code></td><td><code>0x00</code></td><td><code>$rd=rs1+rs2$</code></td></tr>
+                <tr><td>sub</td><td>SUB</td><td>R</td><td><code>0110011</code></td><td><code>0x0</code></td><td><code>0x20</code></td><td><code>$rd=rs1-rs2$</code></td></tr>
+                <tr><td>xor</td><td>XOR</td><td>R</td><td><code>0110011</code></td><td><code>0x4</code></td><td><code>0x00</code></td><td><code>$rd=rs1^rs2$</code></td></tr>
+                <tr><td>or</td><td>OR</td><td>R</td><td><code>0110011</code></td><td><code>0x6</code></td><td><code>0x00</code></td><td><code>$rd=rs1|rs2$</code></td></tr>
+                <tr><td>and</td><td>AND</td><td>R</td><td><code>0110011</code></td><td><code>0x7</code></td><td><code>0x00</code></td><td><code>$rd=rs1&rs2$</code></td></tr>
+                <tr><td>sll</td><td>Shift Left Logical</td><td>R</td><td><code>0110011</code></td><td><code>0x1</code></td><td><code>0x00</code></td><td><code>$rd=rs1&lt;&lt;rs2$</code></td></tr>
+                <tr><td>srl</td><td>Shift Right Logical</td><td>R</td><td><code>0110011</code></td><td><code>0x5</code></td><td><code>0x00</code></td><td><code>$rd=rs1&gt;&gt;rs2$</code></td></tr>
+                <tr><td>sra</td><td>Shift Right Arith*</td><td>R</td><td><code>0110011</code></td><td><code>0x5</code></td><td><code>0x20</code></td><td><code>$rd=rs1&gt;&gt;rs2$</code></td></tr>
+                <tr><td>slt</td><td>Set Less Than</td><td>R</td><td><code>0110011</code></td><td><code>0x2</code></td><td><code>0x00</code></td><td><code>$rd=(rs1&lt;rs2)?1:0$</code></td></tr>
+                <tr><td>sltu</td><td>Set Less Than (U)</td><td>R</td><td><code>0110011</code></td><td><code>0x3</code></td><td><code>0x00</code></td><td><code>$rd=(rs1&lt;rs2)?1:0$</code></td></tr>
+                <tr><td>addi</td><td>ADD Immediate</td><td>I</td><td><code>0010011</code></td><td><code>0x0</code></td><td></td><td><code>$rd=rs1+imm$</code></td></tr>
+                <tr><td>xori</td><td>XOR Immediate</td><td>I</td><td><code>0010011</code></td><td><code>0x4</code></td><td></td><td><code>$rd=rs1^imm$</code></td></tr>
+                <tr><td>ori</td><td>OR Immediate</td><td>I</td><td><code>0010011</code></td><td><code>0x6</code></td><td></td><td><code>$rd=rs1|imm$</code></td></tr>
+                <tr><td>andi</td><td>AND Immediate</td><td>I</td><td><code>0010011</code></td><td><code>0x7</code></td><td></td><td><code>$rd=rs1&imm$</code></td></tr>
+                <tr><td>slli</td><td>Shift Left Logical Imm</td><td>I</td><td><code>0010011</code></td><td><code>0x1</code></td><td><code>$imm[5:11]=0x00$</code></td><td><code>$rd=rs1&lt;&lt;imm[0:4]$</code></td></tr>
+                <tr><td>srli</td><td>Shift Right Logical Imm</td><td>I</td><td><code>0010011</code></td><td><code>0x5</code></td><td><code>$imm[5:11]=0x00$</code></td><td><code>$rd=rs1&gt;&gt;imm[0:4]$</code></td></tr>
+                <tr><td>srai</td><td>Shift Right Arith Imm</td><td>I</td><td><code>0010011</code></td><td><code>0x5</code></td><td><code>$imm[5:11]=0x20$</code></td><td><code>$rd=rs1&gt;&gt;imm[0:4]$</code></td></tr>
+                <tr><td>slti</td><td>Set Less Than Imm</td><td>I</td><td><code>0010011</code></td><td><code>0x2</code></td><td></td><td><code>$rd=(rs1&lt;imm)?1:0$</code></td></tr>
+                <tr><td>sltiu</td><td>Set Less Than Imm (U)</td><td>I</td><td><code>0010011</code></td><td><code>0x3</code></td><td></td><td><code>$rd=(rs1&lt;imm)?1:0$</code></td></tr>
+                <tr><td>lb</td><td>Load Byte</td><td>I</td><td><code>0000011</code></td><td><code>0x0</code></td><td></td><td><code>$rd=M[rs1+imm][0:7]$</code></td></tr>
+                <tr><td>lh</td><td>Load Half</td><td>I</td><td><code>0000011</code></td><td><code>0x1</code></td><td></td><td><code>$rd=M[rs1+imm][0:15]$</code></td></tr>
+                <tr><td>lw</td><td>Load Word</td><td>I</td><td><code>0000011</code></td><td><code>0x2</code></td><td></td><td><code>$rd=M[rs1+imm][0:31]$</code></td></tr>
+                <tr><td>lbu</td><td>Load Byte (U)</td><td>I</td><td><code>0000011</code></td><td><code>0x4</code></td><td></td><td><code>$rd=M[rs1+imm][0:7]$</code></td></tr>
+                <tr><td>lhu</td><td>Load Half (U)</td><td>I</td><td><code>0000011</code></td><td><code>0x5</code></td><td></td><td><code>$rd=M[rs1+imm][0:15]$</code></td></tr>
+                <tr><td>sb</td><td>Store Byte</td><td>S</td><td><code>0100011</code></td><td><code>0x0</code></td><td></td><td><code>$M[rs1+imm][0:7]=rs2[0:7]$</code></td></tr>
+                <tr><td>sh</td><td>Store Half</td><td>S</td><td><code>0100011</code></td><td><code>0x1</code></td><td></td><td><code>$M[rs1+imm][0:15]=rs2[0:15]$</code></td></tr>
+                <tr><td>sw</td><td>Store Word</td><td>S</td><td><code>0100011</code></td><td><code>0x2</code></td><td></td><td><code>$M[rs1+imm][0:31]=rs2[0:31]$</code></td></tr>
+                <tr><td>beq</td><td>Branch ==</td><td>B</td><td><code>1100011</code></td><td><code>0x0</code></td><td></td><td><code>$if(rs1==rs2) PC+=imm$</code></td></tr>
+                <tr><td>bne</td><td>Branch !=</td><td>B</td><td><code>1100011</code></td><td><code>0x1</code></td><td></td><td><code>$if(rs1!=rs2) PC+=imm$</code></td></tr>
+                <tr><td>blt</td><td>Branch &lt;</td><td>B</td><td><code>1100011</code></td><td><code>0x4</code></td><td></td><td><code>$if(rs1&lt;rs2) PC+=imm$</code></td></tr>
+                <tr><td>bge</td><td>Branch &gt;=</td><td>B</td><td><code>1100011</code></td><td><code>0x5</code></td><td></td><td><code>$if(rs1&gt;=rs2) PC+=imm$</code></td></tr>
+                <tr><td>bltu</td><td>Branch &lt; (U)</td><td>B</td><td><code>1100011</code></td><td><code>0x6</code></td><td></td><td><code>if(rs1&lt;rs2) PC+=imm</code></td></tr>
+                <tr><td>bgeu</td><td>Branch &gt;= (U)</td><td>B</td><td><code>1100011</code></td><td><code>0x7</code></td><td></td><td><code>$if(rs1&gt;=rs2) PC+=imm$</code></td></tr>
+                <tr><td>jal</td><td>Jump And Link</td><td>J</td><td><code>1101111</code></td><td></td><td></td><td><code>$rd=PC+4; PC+=imm$</code></td></tr>
+                <tr><td>jalr</td><td>Jump And Link Reg</td><td>I</td><td><code>1100111</code></td><td><code>0x0</code></td><td></td><td><code>$rd=PC+4; PC=rs1+imm$</code></td></tr>
+                <tr><td>lui</td><td>Load Upper Imm</td><td>U</td><td><code>0110111</code></td><td></td><td></td><td><code>$rd=imm&lt;&lt;12$</code></td></tr>
+                <tr><td>auipc</td><td>Add Upper Imm to PC</td><td>U</td><td><code>0010111</code></td><td></td><td></td><td><code>$rd=PC+(imm&lt;&lt;12)$</code></td></tr>
+                <tr><td>ecall</td><td>Environment Call</td><td>I</td><td><code>1110011</code></td><td><code>0x0</code></td><td><code>$imm=0x0$</code></td><td>Transfer control to OS</td></tr>
+                <tr><td>ebreak</td><td>Environment Break</td><td>I</td><td><code>1110011</code></td><td><code>0x0</code></td><td><code>$imm=0x1$</code></td><td>Transfer control to debugger</td></tr>
+            </tbody>
+        </table>
+        
+        <h2>Standard Extensions</h2>
+
+        <h3>RV32M Multiply Extension</h3>
+        <table>
+            <thead>
+                <tr><th>Inst</th><th>Name</th><th>FMT</th><th>Opcode</th><th>funct3</th><th>funct7</th><th>Description (C)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>mul</td><td>MUL</td><td>R</td><td><code>0110011</code></td><td><code>0x0</code></td><td><code>0x01</code></td><td><code>$rd=(rs1*rs2)[31:0]$</code></td></tr>
+                <tr><td>mulh</td><td>MUL High</td><td>R</td><td><code>0110011</code></td><td><code>0x1</code></td><td><code>0x01</code></td><td><code>$rd=(rs1*rs2)[63:32]$</code></td></tr>
+                <tr><td>mulsu</td><td>MUL High (S) (U)</td><td>R</td><td><code>0110011</code></td><td><code>0x2</code></td><td><code>0x01</code></td><td><code>$rd=(rs1*rs2)[63:32]$</code></td></tr>
+                <tr><td>mulu</td><td>MUL High (U)</td><td>R</td><td><code>0110011</code></td><td><code>0x3</code></td><td><code>0x01</code></td><td><code>$rd=(rs1*rs2)[63:32]$</code></td></tr>
+                <tr><td>div</td><td>DIV</td><td>R</td><td><code>0110011</code></td><td><code>0x4</code></td><td><code>0x01</code></td><td><code>$rd=rs1/rs2$</code></td></tr>
+                <tr><td>divu</td><td>DIV (U)</td><td>R</td><td><code>0110011</code></td><td><code>0x5</code></td><td><code>0x01</code></td><td><code>$rd=rs1/rs2$</code></td></tr>
+                <tr><td>rem</td><td>Remainder</td><td>R</td><td><code>0110011</code></td><td><code>0x6</code></td><td><code>$0x01$</code></td><td><code>$rd=rs1%rs2$</code></td></tr>
+                <tr><td>remu</td><td>Remainder (U)</td><td>R</td><td><code>0110011</code></td><td><code>0x7</code></td><td><code>$0x01$</code></td><td><code>$rd=rs1%rs2$</code></td></tr>
+            </tbody>
+        </table>
+        
+        <h3>RV32A Atomic Extension</h3>
+        <table>
+            <thead>
+                <tr><th>Inst</th><th>Name</th><th>FMT</th><th>Opcode</th><th>funct3</th><th>funct5</th><th>Description (C)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>lr.w</td><td>Load Reserved</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x02</code></td><td><code>$rd=M[rs1]$, reserve M[rs1]</code></td></tr>
+                <tr><td>sc.w</td><td>Store Conditional</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x03</code></td><td><code>if (reserved) { M[rs1]=rs2; rd=0 } else { rd=1 }</code></td></tr>
+                <tr><td>amoswap.w</td><td>Atomic Swap</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x01</code></td><td><code>$rd=M[rs1]; M[rs1]=rs2$</code></td></tr>
+                <tr><td>amoadd.w</td><td>Atomic ADD</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x00</code></td><td><code>$rd=M[rs1]; M[rs1]=rd+rs2$</code></td></tr>
+                <tr><td>amoand.w</td><td>Atomic AND</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x0C</code></td><td><code>$rd=M[rs1]; M[rs1]=rd&rs2$</code></td></tr>
+                <tr><td>amoor.w</td><td>Atomic OR</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x0A</code></td><td><code>$rd=M[rs1]; M[rs1]=rd|rs2$</code></td></tr>
+                <tr><td>amoxor.w</td><td>Atomic XOR</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x04</code></td><td><code>$rd=M[rs1]; M[rs1]=rd^rs2$</code></td></tr>
+                <tr><td>amomax.w</td><td>Atomic MAX</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x14</code></td><td><code>$rd=M[rs1]; M[rs1]=max(rd,rs2)$</code></td></tr>
+                <tr><td>amomin.w</td><td>Atomic MIN</td><td>R</td><td><code>0101111</code></td><td><code>0x2</code></td><td><code>0x10</code></td><td><code>$rd=M[rs1]; M[rs1]=min(rd,rs2)$</code></td></tr>
+            </tbody>
+        </table>
+
+        <h3>RV32F/D Floating-Point Extensions</h3>
+        <table>
+            <thead>
+                <tr><th>Inst</th><th>Name</th><th>Description (C)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>flw</td><td>Flt Load Word</td><td><code>$rd=M[rs1+imm]$</code></td></tr>
+                <tr><td>fsw</td><td>Flt Store Word</td><td><code>$M[rs1+imm]=rs2$</code></td></tr>
+                <tr><td>fmadd.s</td><td>Flt Fused Mul-Add</td><td><code>$rd=rs1*rs2+rs3$</code></td></tr>
+                <tr><td>fmsub.s</td><td>Flt Fused Mul-Sub</td><td><code>$rd=rs1*rs2-rs3$</code></td></tr>
+                <tr><td>fnmadd.s</td><td>Flt Neg Fused Mul-Add</td><td><code>$rd=-(rs1*rs2+rs3)$</code></td></tr>
+                <tr><td>fnmsub.s</td><td>Flt Neg Fused Mul-Sub</td><td><code>$rd=-(rs1*rs2-rs3)$</code></td></tr>
+                <tr><td>fadd.s</td><td>Flt Add</td><td><code>$rd=rs1+rs2$</code></td></tr>
+                <tr><td>fsub.s</td><td>Flt Sub</td><td><code>$rd=rs1-rs2$</code></td></tr>
+                <tr><td>fmul.s</td><td>Flt Mul</td><td><code>$rd=rs1*rs2$</code></td></tr>
+                <tr><td>fdiv.s</td><td>Flt Div</td><td><code>$rd=rs1/rs2$</code></td></tr>
+                <tr><td>fsqrt.s</td><td>Flt Square Root</td><td><code>$rd=sqrt(rs1)$</code></td></tr>
+                <tr><td>fsgnj.s</td><td>Flt Sign Injection</td><td><code>$rd=abs(rs1)*sgn(rs2)$</code></td></tr>
+                <tr><td>fsgnjn.s</td><td>Flt Sign Neg Injection</td><td><code>$rd=abs(rs1)*-sgn(rs2)$</code></td></tr>
+                <tr><td>fsgnjx.s</td><td>Flt Sign Xor Injection</td><td><code>$rd=rs1*sgn(rs2)$</code></td></tr>
+                <tr><td>fmin.s</td><td>Flt Minimum</td><td><code>$rd=min(rs1,rs2)$</code></td></tr>
+                <tr><td>fmax.s</td><td>Flt Maximum</td><td><code>$rd=max(rs1,rs2)$</code></td></tr>
+                <tr><td>fcvt.s.w</td><td>Flt Conv from Sign Int</td><td><code>rd=(float)rs1</code></td></tr>
+                <tr><td>fcvt.s.wu</td><td>Flt Conv from Uns Int</td><td><code>rd=(float)rs1</code></td></tr>
+                <tr><td>fcvt.w.s</td><td>Flt Convert to Int</td><td><code>rd=(int32_t)rs1</code></td></tr>
+                <tr><td>fcvt.wu.s</td><td>Flt Convert to Uns Int</td><td><code>$rd=(uint32_t)rs1$</code></td></tr>
+                <tr><td>fmv.x.w</td><td>Move Float to Int</td><td><code>rd=rs1</code></td></tr>
+                <tr><td>fmv.w.x</td><td>Move Int to Float</td><td><code>rd=rs1</code></td></tr>
+                <tr><td>feq.s</td><td>Float Equality</td><td><code>$rd=(rs1==rs2)?1:0$</code></td></tr>
+                <tr><td>flt.s</td><td>Float Less Than</td><td><code>$rd=(rs1<rs2)?1:0$</code></td></tr>
+                <tr><td>fle.s</td><td>Float Less/Equal</td><td><code>$rd=(rs1<=rs2)?1:0$</code></td></tr>
+                <tr><td>fclass.s</td><td>Float Classify</td><td><code>$rd=class(rs1)$</code></td></tr>
+            </tbody>
+        </table>
+
+        <h3>RV32C Compressed Extension</h3>
+        <table>
+            <thead>
+                <tr><th>Inst</th><th>Name</th><th>FMT</th><th>OP</th><th>Funct</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>c.lwsp</td><td>Load Word from SP</td><td>CI</td><td>10</td><td><code>010</code></td><td><code>lw rd, (4*imm)(sp)</code></td></tr>
+                <tr><td>c.swsp</td><td>Store Word to SP</td><td>CSS</td><td>10</td><td><code>110</code></td><td><code>sw rs2, (4*imm)(sp)</code></td></tr>
+                <tr><td>c.lw</td><td>Load Word</td><td>CL</td><td>00</td><td><code>010</code></td><td><code>lw rd', (4*imm)(rs1')</code></td></tr>
+                <tr><td>c.sw</td><td>Store Word</td><td>CS</td><td>00</td><td><code>110</code></td><td><code>sw rs2', (4*imm)(rs1')</code></td></tr>
+                <tr><td>c.j</td><td>Jump</td><td>CJ</td><td>01</td><td><code>101</code></td><td><code>jal x0, 2*offset</code></td></tr>
+                <tr><td>c.jal</td><td>Jump And Link</td><td>CJ</td><td>01</td><td><code>001</code></td><td><code>jal ra, 2*offset</code></td></tr>
+                <tr><td>c.jr</td><td>Jump Reg</td><td>CR</td><td>10</td><td><code>1000</code></td><td><code>jalr x0, rs1, 0</code></td></tr>
+                <tr><td>c.jalr</td><td>Jump And Link Reg</td><td>CR</td><td>10</td><td><code>1001</code></td><td><code>jalr ra, rs1, 0</code></td></tr>
+                <tr><td>c.beqz</td><td>Branch == 0</td><td>CB</td><td>01</td><td><code>110</code></td><td><code>beq rs', x0, 2*imm</code></td></tr>
+                <tr><td>c.bnez</td><td>Branch != 0</td><td>CB</td><td>01</td><td><code>111</code></td><td><code>bne rs', x0, 2*imm</code></td></tr>
+                <tr><td>c.li</td><td>Load Immediate</td><td>CI</td><td>01</td><td><code>010</code></td><td><code>addi rd, x0, imm</code></td></tr>
+                <tr><td>c.lui</td><td>Load Upper Imm</td><td>CI</td><td>01</td><td><code>011</code></td><td><code>lui rd, imm</code></td></tr>
+                <tr><td>c.addi</td><td>ADD Immediate</td><td>CI</td><td>01</td><td><code>000</code></td><td><code>addi rd, rd, imm</code></td></tr>
+                <tr><td>c.addi16sp</td><td>ADD Imm*16 to SP</td><td>CI</td><td>01</td><td><code>011</code></td><td><code>addi sp, sp, 16*imm</code></td></tr>
+                <tr><td>c.addi4spn</td><td>ADD Imm*4+SP</td><td>CIW</td><td>00</td><td><code>000</code></td><td><code>addi rd', sp, 4*imm</code></td></tr>
+                <tr><td>c.slli</td><td>Shift Left Logical Imm</td><td>CI</td><td>10</td><td><code>000</code></td><td><code>slli rd, rd, imm</code></td></tr>
+                <tr><td>c.srli</td><td>Shift Right Logical Imm</td><td>CB</td><td>01</td><td><code>100</code></td><td><code>srli rd', rd', imm</code></td></tr>
+                <tr><td>c.srai</td><td>Shift Right Arith Imm</td><td>CB</td><td>01</td><td><code>100</code></td><td><code>srai rd', rd', imm</code></td></tr>
+                <tr><td>c.andi</td><td>AND Imm</td><td>CB</td><td>01</td><td><code>100</code></td><td><code>andi rd', rd', imm</code></td></tr>
+                <tr><td>c.mv</td><td>MoVe</td><td>CR</td><td>10</td><td><code>1000</code></td><td><code>add rd, x0, rs2</code></td></tr>
+                <tr><td>c.add</td><td>ADD</td><td>CR</td><td>10</td><td><code>1000</code></td><td><code>add rd, rd, rs2</code></td></tr>
+                <tr><td>c.and</td><td>AND</td><td>CS</td><td>01</td><td><code>100</code></td><td><code>and rd', rd', rs2'</code></td></tr>
+                <tr><td>c.or</td><td>OR</td><td>CS</td><td>01</td><td><code>100</code></td><td><code>or rd', rd', rs2'</code></td></tr>
+                <tr><td>c.xor</td><td>XOR</td><td>CS</td><td>01</td><td><code>100</code></td><td><code>xor rd', rd', rs2'</code></td></tr>
+                <tr><td>c.sub</td><td>SUB</td><td>CS</td><td>01</td><td><code>100</code></td><td><code>sub rd', rd', rs2'</code></td></tr>
+                <tr><td>c.nop</td><td>No Operation</td><td>CI</td><td>01</td><td><code>000</code></td><td><code>addi x0, x0, 0</code></td></tr>
+                <tr><td>c.ebreak</td><td>Environment BREAK</td><td>CR</td><td>10</td><td><code>1001</code></td><td><code>ebreak</code></td></tr>
+            </tbody>
+        </table>
+
+        <h2>Pseudo Instructions</h2>
+        <table>
+            <thead>
+                <tr><th>Pseudoinstruction</th><th>Base Instruction(s)</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>la rd, symbol</code></td><td><code>auipc rd, sym[31:12]; addi rd, rd, sym[11:0]</code></td><td>Load address</td></tr>
+                <tr><td><code>nop</code></td><td><code>addi x0, x0, 0</code></td><td>No operation</td></tr>
+                <tr><td><code>li rd, immediate</code></td><td>Myriad sequences</td><td>Load immediate</td></tr>
+                <tr><td><code>mv rd, rs</code></td><td><code>addi rd, rs, 0</code></td><td>Copy register</td></tr>
+                <tr><td><code>not rd, rs</code></td><td><code>xori rd, rs, -1</code></td><td>One's complement</td></tr>
+                <tr><td><code>neg rd, rs</code></td><td><code>sub rd, x0, rs</code></td><td>Two's complement</td></tr>
+                <tr><td><code>seqz rd, rs</code></td><td><code>sltiu rd, rs, 1</code></td><td>Set if = zero</td></tr>
+                <tr><td><code>snez rd, rs</code></td><td><code>sltu rd, x0, rs</code></td><td>Set if ≠ zero</td></tr>
+                <tr><td><code>sltz rd, rs</code></td><td><code>slt rd, rs, x0</code></td><td>Set if &lt; zero</td></tr>
+                <tr><td><code>sgtz rd, rs</code></td><td><code>slt rd, x0, rs</code></td><td>Set if &gt; zero</td></tr>
+                <tr><td><code>beqz rs, offset</code></td><td><code>beq rs, x0, offset</code></td><td>Branch if = zero</td></tr>
+                <tr><td><code>bnez rs, offset</code></td><td><code>bne rs, x0, offset</code></td><td>Branch if ≠ zero</td></tr>
+                <tr><td><code>blez rs, offset</code></td><td><code>bge x0, rs, offset</code></td><td>Branch if ≤ zero</td></tr>
+                <tr><td><code>bgez rs, offset</code></td><td><code>bge rs, x0, offset</code></td><td>Branch if ≥ zero</td></tr>
+                <tr><td><code>bltz rs, offset</code></td><td><code>blt rs, x0, offset</code></td><td>Branch if &lt; zero</td></tr>
+                <tr><td><code>bgtz rs, offset</code></td><td><code>blt x0, rs, offset</code></td><td>Branch if &gt; zero</td></tr>
+                <tr><td><code>j offset</code></td><td><code>jal x0, offset</code></td><td>Jump</td></tr>
+                <tr><td><code>jal offset</code></td><td><code>jal x1, offset</code></td><td>Jump and link</td></tr>
+                <tr><td><code>jr rs</code></td><td><code>jalr x0, rs, 0</code></td><td>Jump register</td></tr>
+                <tr><td><code>jalr rs</code></td><td><code>jalr x1, rs, 0</code></td><td>Jump and link register</td></tr>
+                <tr><td><code>ret</code></td><td><code>jalr x0, x1, 0</code></td><td>Return from subroutine</td></tr>
+                <tr><td><code>call offset</code></td><td><code>auipc x1, off[31:12]; jalr x1, x1, off[11:0]</code></td><td>Call far-away subroutine</td></tr>
+            </tbody>
+        </table>
+        
+        <h2>Registers</h2>
+        <table>
+            <thead>
+                <tr><th>Register</th><th>ABI Name</th><th>Description</th><th>Saver</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>x0</td><td>zero</td><td>Zero constant</td><td>-</td></tr>
+                <tr><td>x1</td><td>ra</td><td>Return address</td><td>Caller</td></tr>
+                <tr><td>x2</td><td>sp</td><td>Stack pointer</td><td>Callee</td></tr>
+                <tr><td>x3</td><td>gp</td><td>Global pointer</td><td>-</td></tr>
+                <tr><td>x4</td><td>tp</td><td>Thread pointer</td><td>-</td></tr>
+                <tr><td>x5-x7</td><td>t0-t2</td><td>Temporaries</td><td>Caller</td></tr>
+                <tr><td>x8</td><td>s0/fp</td><td>Saved / frame pointer</td><td>Callee</td></tr>
+                <tr><td>x9</td><td>s1</td><td>Saved register</td><td>Callee</td></tr>
+                <tr><td>x10-x11</td><td>a0-a1</td><td>Fn args/return values</td><td>Caller</td></tr>
+                <tr><td>x12-x17</td><td>a2-a7</td><td>Fn args</td><td>Caller</td></tr>
+                <tr><td>x18-x27</td><td>s2-s11</td><td>Saved registers</td><td>Callee</td></tr>
+                <tr><td>x28-x31</td><td>t3-t6</td><td>Temporaries</td><td>Caller</td></tr>
+                <tr><td>f0-f7</td><td>ft0-ft7</td><td>FP temporaries</td><td>Caller</td></tr>
+                <tr><td>f8-f9</td><td>fs0-fs1</td><td>FP saved registers</td><td>Callee</td></tr>
+                <tr><td>f10-f11</td><td>fa0-fa1</td><td>FP args/return values</td><td>Caller</td></tr>
+                <tr><td>f12-f17</td><td>fa2-fa7</td><td>FP args</td><td>Caller</td></tr>
+                <tr><td>f18-f27</td><td>fs2-fs11</td><td>FP saved registers</td><td>Callee</td></tr>
+                <tr><td>f28-f31</td><td>ft8-ft11</td><td>FP temporaries</td><td>Caller</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // JavaScript for interactive bitfield table
+        const table = document.getElementById('bitfield-table');
+        const headers = table.querySelectorAll('.bit-header');
+        const cells = table.querySelectorAll('tbody td[data-bits]');
+
+        cells.forEach(cell => {
+            cell.addEventListener('mouseover', () => {
+                const [end, start] = cell.dataset.bits.split('-').map(Number);
+                headers.forEach(header => {
+                    const bit = Number(header.dataset.bit);
+                    if (bit >= start && bit <= end) {
+                        header.classList.add('highlight');
+                    }
+                });
+            });
+
+            cell.addEventListener('mouseout', () => {
+                headers.forEach(header => {
+                    header.classList.remove('highlight');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução JAL - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>JAL - Salto e Liga (Jump and Link)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">jal rd, lab</div>
+
+        <h2>Descrição</h2>
+        <p>Armazena o endereço de retorno (PC+4) no registrador <code>rd</code>, então salta para o rótulo <code>lab</code>. Permite especificar qualquer registrador como destino do endereço de retorno.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> J-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1101111</code></div>
+            <div class="info-item"><strong>Alcance:</strong> ±1 MB (±2^20 bytes)</div>
+            <div class="info-item"><strong>Offset:</strong> 20 bits, múltiplo de 2</div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = PC + 4
+PC = PC + offset</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Chamada com registrador customizado</h3>
+            <div class="example-code">main:
+    li x10, 100
+    jal x5, processa  # salva retorno em x5 ao invés de ra
+    # ra permanece intacto para retorno de main
+    add x11, x10, x5
+
+processa:
+    addi x10, x10, 50
+    jalr x0, x5, 0    # retorna usando x5</div>
+            <div class="example-explanation">
+                Útil quando ra já contém um endereço de retorno que precisa ser preservado.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Salvar múltiplos endereços de retorno</h3>
+            <div class="example-code">funcao_externa:
+    addi sp, sp, -4
+    sw ra, 0(sp)      # salva ra na pilha
+
+    jal x6, funcao_A  # usa x6 para retorno
+    jal x7, funcao_B  # usa x7 para retorno
+
+    lw ra, 0(sp)      # restaura ra
+    addi sp, sp, 4
+    ret</div>
+            <div class="example-explanation">
+                Permite gerenciar múltiplos pontos de retorno sem usar a pilha para todos.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Salto sem salvar retorno</h3>
+            <div class="example-code">    jal x0, destino   # equivalente a "j destino"
+    # não salva endereço de retorno (x0 sempre = 0)
+
+destino:
+    # código continua aqui sem possibilidade de retornar</div>
+            <div class="example-explanation">
+                Usar x0 como rd descarta o endereço de retorno, transformando em salto incondicional.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Esta é a instrução real de máquina, não uma pseudo-instrução</li>
+            <li>Permite escolher qualquer registrador como destino (rd)</li>
+            <li>Se rd = x0, funciona como salto incondicional (equivalente a j)</li>
+            <li>Se rd = x1 (ra), é a forma padrão para chamadas de função</li>
+            <li>O offset é sempre múltiplo de 2 (alinhamento de instruções)</li>
+            <li>Alcance de ±1 MB permite saltos para a maioria das funções</li>
+            <li>Para distâncias maiores, use sequência auipc + jalr</li>
+            <li>Offset é calculado automaticamente pelo assembler</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução JAL (Pseudo) - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>JAL - Salto e Liga (Jump and Link) - Pseudo-instrução</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">jal lab</div>
+
+        <h2>Descrição</h2>
+        <p>Armazena o endereço de retorno (PC+4) no registrador de retorno (<code>ra</code>), então salta para o rótulo <code>lab</code>. Esta é uma pseudo-instrução que é traduzida para <code>jal ra, lab</code> ou <code>jal x1, lab</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (J-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>jal x1, lab</code></div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1101111</code></div>
+            <div class="info-item"><strong>Alcance:</strong> ±1 MB</div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">ra = PC + 4
+PC = PC + offset</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Chamada de função simples</h3>
+            <div class="example-code">main:
+    li x10, 5
+    jal soma_10       # chama função e salva retorno em ra
+    # execução continua aqui após retorno
+    mv x11, x10       # resultado em x11
+
+soma_10:
+    addi x10, x10, 10
+    ret               # retorna usando endereço em ra</div>
+            <div class="example-explanation">
+                Uso padrão para chamada de função. O endereço de retorno é automaticamente salvo em ra.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Múltiplas chamadas de função</h3>
+            <div class="example-code">main:
+    jal inicializa
+    jal processa
+    jal finaliza
+    j fim
+
+inicializa:
+    # código de inicialização
+    ret
+
+processa:
+    # código de processamento
+    ret
+
+finaliza:
+    # código de finalização
+    ret
+
+fim:</div>
+            <div class="example-explanation">
+                Sequência de chamadas de função onde cada uma retorna ao ponto logo após a chamada.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Função com parâmetros</h3>
+            <div class="example-code">main:
+    li x10, 15        # primeiro parâmetro
+    li x11, 25        # segundo parâmetro
+    jal adiciona      # chama função
+    # resultado retorna em x10
+
+adiciona:
+    add x10, x10, x11 # soma parâmetros
+    ret               # retorna resultado em x10</div>
+            <div class="example-explanation">
+                Convenção de chamada: parâmetros em a0-a7 (x10-x17), resultado em a0 (x10).
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Esta é uma pseudo-instrução expandida para <code>jal x1, lab</code></li>
+            <li>O registrador x1 (ra) é o registrador de retorno padrão por convenção</li>
+            <li>Salva automaticamente PC+4 em ra antes de saltar</li>
+            <li>Usado para chamadas de função que precisam retornar</li>
+            <li>Deve ser seguido por <code>ret</code> no final da função chamada</li>
+            <li>Alcance máximo de ±1 MB (±2^20 bytes) do PC atual</li>
+            <li>Para funções aninhadas, salve ra na pilha antes de nova chamada</li>
+        </ul>
+    </div>
+</body>
+</html>

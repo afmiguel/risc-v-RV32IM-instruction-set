@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SLL - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SLL - Deslocamento Lógico à Esquerda</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sll rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Desloca logicamente o valor no registrador <code>rs1</code> para a esquerda pelo número de bits especificado nos 5 bits menos significativos de <code>rs2</code>, inserindo zeros nas posições vazias à direita, e armazena o resultado em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x00</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = rs1 << (rs2 & 0x1F)</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Multiplicar por potência de 2</h3>
+            <div class="example-code"># Multiplicar por 8 (2^3)
+li x5, 10              # x5 = 10
+li x6, 3               # deslocar 3 posições
+sll x7, x5, x6         # x7 = 80 (10 * 8)</div>
+            <div class="example-explanation">
+                Deslocar à esquerda por N bits é equivalente a multiplicar por 2^N. Neste caso, deslocar por 3 multiplica por 8.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Alinhar dados</h3>
+            <div class="example-code"># Deslocar byte para a posição mais significativa
+li x10, 0xAB           # byte = 0xAB
+li x11, 24             # deslocar 24 bits
+sll x12, x10, x11      # x12 = 0xAB000000</div>
+            <div class="example-explanation">
+                Útil para posicionar bytes ou campos de bits em locais específicos de uma palavra de 32 bits.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Criar máscara de bits</h3>
+            <div class="example-code"># Criar máscara com bit 10 setado
+li x20, 1              # começar com 1
+li x21, 10             # posição do bit
+sll x22, x20, x21      # x22 = 0x400 = 1024</div>
+            <div class="example-explanation">
+                Deslocar o valor 1 à esquerda por N posições cria uma máscara com apenas o bit N setado.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Apenas os 5 bits menos significativos de rs2 são usados (valores de 0 a 31)</li>
+            <li>Zeros são inseridos nas posições vazias à direita</li>
+            <li>Bits que saem pela esquerda são descartados</li>
+            <li>Operação muito eficiente para multiplicação por potências de 2</li>
+            <li>Não há versão com sinal - o deslocamento à esquerda é sempre lógico</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SRA - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SRA - Deslocamento Aritmético à Direita</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sra rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Desloca aritmeticamente o valor no registrador <code>rs1</code> para a direita pelo número de bits especificado nos 5 bits menos significativos de <code>rs2</code>, preservando o bit de sinal (MSB) nas posições vazias à esquerda, e armazena o resultado em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x5</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x20</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = (signed)rs1 >> (rs2 & 0x1F)</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Dividir número com sinal por potência de 2</h3>
+            <div class="example-code"># Dividir -16 por 4 (2^2)
+li x5, -16             # x5 = -16
+li x6, 2               # deslocar 2 posições
+sra x7, x5, x6         # x7 = -4 (-16 / 4)</div>
+            <div class="example-explanation">
+                O SRA preserva o sinal do número durante o deslocamento, tornando-o adequado para divisão de números com sinal. O bit de sinal é replicado à esquerda.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Diferença entre SRA e SRL</h3>
+            <div class="example-code"># Comparar SRA vs SRL com número negativo
+li x10, -8             # x10 = 0xFFFFFFF8
+li x11, 1              # deslocar 1 bit
+sra x12, x10, x11      # x12 = -4 = 0xFFFFFFFC (sinal preservado)
+srl x13, x10, x11      # x13 = 2147483644 = 0x7FFFFFFC (preenchido com 0)</div>
+            <div class="example-explanation">
+                Este exemplo mostra como SRA preserva o sinal (preenche com 1 para negativos) enquanto SRL sempre preenche com 0, independente do sinal.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Implementar divisão com arredondamento</h3>
+            <div class="example-code"># Dividir número com sinal por 8 com arredondamento
+li x20, -25            # x20 = -25
+li x21, 3              # dividir por 8 (2^3)
+sra x22, x20, x21      # x22 = -4 (arredondamento para baixo)</div>
+            <div class="example-explanation">
+                SRA realiza divisão inteira de números com sinal, arredondando em direção ao infinito negativo. Para -25 / 8, o resultado é -4 (não -3).
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Apenas os 5 bits menos significativos de rs2 são usados (valores de 0 a 31)</li>
+            <li>O bit de sinal (MSB) é replicado para as posições vazias à esquerda</li>
+            <li>Preserva o sinal do número original (números negativos continuam negativos)</li>
+            <li>Útil para divisão por potências de 2 de números com sinal</li>
+            <li>Diferente de SRL, que sempre preenche com zeros</li>
+        </ul>
+    </div>
+</body>
+</html>

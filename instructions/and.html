@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução AND - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg-color: #ffffff;
+            --text-color: #34495e;
+            --header-color: #2c3e50;
+            --primary-color: #3498db;
+            --border-color: #e0e5ec;
+            --header-bg-color: #ecf0f1;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 2em 3em;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--header-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .syntax-box {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2em;
+            margin: 1em 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1em;
+            margin: 1em 0;
+        }
+
+        .info-item {
+            background-color: var(--header-bg-color);
+            padding: 0.8em;
+            border-radius: 6px;
+        }
+
+        .info-item strong {
+            color: var(--header-color);
+        }
+
+        .example-section {
+            margin: 2em 0;
+        }
+
+        .example-code {
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            font-family: 'Fira Code', monospace;
+            margin: 0.5em 0;
+            white-space: pre-wrap;
+        }
+
+        .example-explanation {
+            background-color: #e3f2fd;
+            padding: 0.8em;
+            border-radius: 6px;
+            margin: 0.5em 0;
+            font-style: italic;
+        }
+
+        .notes-list {
+            background-color: #fff3cd;
+            padding: 1em 1em 1em 2.5em;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: #e8eef3;
+            color: #c0392b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5em 1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>AND - Operação E bit a bit</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">and rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Executa a operação lógica AND bit a bit entre os valores nos registradores <code>rs1</code> e <code>rs2</code>, armazenando o resultado no registrador <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x7</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x00</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = rs1 & rs2</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Mascaramento de bits</h3>
+            <div class="example-code"># Isolar os 4 bits menos significativos
+li x5, 0b11010110    # x5 = 214 (binário: 11010110)
+li x6, 0b00001111    # x6 = 15 (máscara: 00001111)
+and x7, x5, x6       # x7 = 6 (binário: 00000110)</div>
+            <div class="example-explanation">
+                O AND é usado para aplicar uma máscara, mantendo apenas os bits desejados. No exemplo acima, apenas os 4 bits menos significativos de x5 são preservados.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Verificar se número é par</h3>
+            <div class="example-code"># Verificar se x10 é par (bit 0 == 0)
+li x11, 1            # máscara para bit menos significativo
+and x12, x10, x11    # x12 = 0 se par, 1 se ímpar</div>
+            <div class="example-explanation">
+                Se o resultado for 0, o número é par. Se for 1, é ímpar. Isso funciona porque números pares têm o bit menos significativo igual a 0.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Limpar bits específicos</h3>
+            <div class="example-code"># Limpar bits 4-7 de um registrador
+li x20, 0xFF0F       # máscara: 1111111100001111
+and x21, x20, x22    # limpa bits 4-7 de x22</div>
+            <div class="example-explanation">
+                Útil para manipulação de campos de bits em estruturas de dados. Os bits que são 0 na máscara serão zerados no resultado.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>A operação AND preserva apenas os bits que são 1 em ambos os operandos</li>
+            <li>Muito usado para mascaramento e isolamento de bits específicos</li>
+            <li>O resultado de um bit é 1 apenas quando ambos os bits correspondentes são 1</li>
+            <li>Útil para verificar flags e condições específicas em programação de baixo nível</li>
+        </ul>
+    </div>
+</body>
+</html>
