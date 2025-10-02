@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRR - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRR - Ler CSR (Read CSR)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrr rd, csr</div>
+
+        <h2>Descrição</h2>
+        <p>Copia o valor do registrador de controle e status <code>csr</code> para o registrador <code>rd</code>. Esta é uma pseudo-instrução traduzida para <code>csrrs rd, csr, x0</code>. É a forma mais comum e idiomática de ler um CSR sem modificá-lo.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (I-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>csrrs rd, csr, x0</code></div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = csr
+# csr permanece inalterado</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Ler causa de exceção</h3>
+            <div class="example-code">trap_handler:
+    csrr x5, mcause   # lê causa da exceção
+    bltz x5, interrupcao
+    # É uma exceção síncrona
+    # x5 contém código da exceção
+    j trata_excecao
+
+interrupcao:
+    # É uma interrupção assíncrona
+    # x5 contém código com bit 31 = 1</div>
+            <div class="example-explanation">
+                Uso comum em handlers de trap para determinar a causa da exceção ou interrupção.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Verificar endereço de exceção</h3>
+            <div class="example-code">    csrr x6, mepc     # lê endereço da instrução que causou exceção
+    # Analisa instrução em x6
+    lw x7, 0(x6)      # carrega instrução
+
+    # Processa exceção...
+
+    # Avança PC para pular instrução problemática
+    addi x6, x6, 4
+    csrw mepc, x6     # atualiza endereço de retorno</div>
+            <div class="example-explanation">
+                Leitura de mepc para inspeção e possível modificação do ponto de retorno.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Salvar estado de interrupções</h3>
+            <div class="example-code">    # Salvar estado atual de mstatus
+    csrr x5, mstatus  # lê mstatus
+    addi sp, sp, -4
+    sw x5, 0(sp)      # salva na pilha
+
+    # Código da seção crítica
+    # ...
+
+    # Restaurar estado
+    lw x5, 0(sp)
+    addi sp, sp, 4
+    csrw mstatus, x5  # restaura mstatus original</div>
+            <div class="example-explanation">
+                Salvar e restaurar estado de CSR para preservar configurações durante seções críticas.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Esta é uma pseudo-instrução expandida para <code>csrrs rd, csr, x0</code></li>
+            <li>Leitura não-destrutiva: o CSR não é modificado</li>
+            <li>Forma mais legível e idiomática de ler CSRs</li>
+            <li>Usar x0 como fonte garante que nenhum bit seja setado</li>
+            <li>Acesso requer privilégios adequados (alguns CSRs são privilegiados)</li>
+            <li>Útil para diagnóstico, depuração e análise de estado do sistema</li>
+            <li>CSRs comuns: mstatus, mcause, mepc, mtvec, mie, mip</li>
+            <li>Alguns CSRs têm efeitos colaterais na leitura (ex: contadores)</li>
+            <li>Operação atômica: valor lido é consistente</li>
+        </ul>
+    </div>
+</body>
+</html>

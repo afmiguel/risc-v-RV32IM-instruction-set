@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRS - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRS - Setar Bits de CSR (Set bits in CSR)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrs csr, rs</div>
+
+        <h2>Descrição</h2>
+        <p>Seta (configura para 1) bits específicos do registrador de controle e status <code>csr</code> usando o conteúdo do registrador <code>rs</code> como máscara de bits. Os bits que são 1 em <code>rs</code> são setados no CSR. Esta é uma pseudo-instrução traduzida para <code>csrrs x0, csr, rs</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (I-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>csrrs x0, csr, rs</code></div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">csr = csr | rs</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Habilitar interrupções globais</h3>
+            <div class="example-code">    # Habilitar interrupções em modo M
+    li x5, 0x8        # bit MIE (bit 3)
+    csrs mstatus, x5  # seta bit MIE
+    # Agora interrupções globais estão habilitadas</div>
+            <div class="example-explanation">
+                Uso mais comum: habilitar interrupções globais setando o bit MIE em mstatus.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Habilitar interrupções específicas</h3>
+            <div class="example-code">    # Habilitar timer, software e externa
+    li x5, 0x888      # bits 11 (MEIE), 7 (MTIE), 3 (MSIE)
+    csrs mie, x5      # seta esses bits em mie
+
+    # Agora essas três fontes de interrupção estão habilitadas</div>
+            <div class="example-explanation">
+                Habilita múltiplas fontes de interrupção simultaneamente usando máscara.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Configurar bits de modo</h3>
+            <div class="example-code">    # Setar MPP (Machine Previous Privilege) para Supervisor
+    li x6, 0x800      # bit 11 (MPP = 01 = Supervisor)
+    csrs mstatus, x6  # seta bit 11
+
+    # Limpar bit 12 para completar MPP = 01
+    li x7, 0x1000
+    csrc mstatus, x7</div>
+            <div class="example-explanation">
+                Configuração de campos multi-bit em registradores de status usando csrs e csrc.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Esta é uma pseudo-instrução expandida para <code>csrrs x0, csr, rs</code></li>
+            <li>Não lê o valor antigo do CSR (descarta em x0)</li>
+            <li>Operação atômica: read-modify-write em um ciclo</li>
+            <li>Bits que são 1 em rs são setados (=1) no CSR</li>
+            <li>Bits que são 0 em rs permanecem inalterados no CSR</li>
+            <li>Útil para habilitar flags, interrupções ou recursos específicos</li>
+            <li>Complementar à instrução csrc (que limpa bits)</li>
+            <li>Acesso a CSRs requer privilégios adequados</li>
+            <li>Se rs = x0, a operação não modifica o CSR (equivale a leitura)</li>
+            <li>Não afeta bits read-only do CSR</li>
+        </ul>
+    </div>
+</body>
+</html>

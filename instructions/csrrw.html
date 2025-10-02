@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRRW - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRRW - Ler e Escrever CSR (Read/Write CSR)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrrw rd, csr, rs1</div>
+
+        <h2>Descrição</h2>
+        <p>Copia o valor do registrador de controle e status <code>csr</code> para o registrador <code>rd</code> e o valor do registrador <code>rs1</code> para o registrador <code>csr</code>. Se <code>rd</code> = <code>rs1</code>, a instrução executa uma troca atômica entre os registradores.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+            <div class="info-item"><strong>CSR:</strong> 12 bits (imediato)</div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">temp = csr
+csr = rs1
+rd = temp</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Trocar valor de CSR</h3>
+            <div class="example-code">    # Substituir vetor de trap
+    la x5, novo_handler
+    csrrw x6, mtvec, x5   # x6 = mtvec antigo, mtvec = novo
+    # x6 agora contém endereço do handler antigo</div>
+            <div class="example-explanation">
+                Troca atômica do endereço do trap handler, salvando o valor anterior.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Swap atômico (rd = rs1)</h3>
+            <div class="example-code">    # Valor inicial em mscratch
+    li x5, 0x12345678
+    csrw mscratch, x5
+
+    # Trocar valor atomicamente
+    li x5, 0xABCDEF00
+    csrrw x5, mscratch, x5
+    # Agora: x5 = 0x12345678, mscratch = 0xABCDEF00</div>
+            <div class="example-explanation">
+                Quando rd = rs1, realiza uma troca atômica entre registrador e CSR.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Salvar e modificar mstatus</h3>
+            <div class="example-code">    # Salvar mstatus atual e desabilitar interrupções
+    csrr x5, mstatus      # lê mstatus
+    li x6, 0xFFFFFFF7     # máscara: limpa bit MIE (bit 3)
+    and x6, x5, x6        # prepara novo valor
+    csrrw x7, mstatus, x6 # x7 = mstatus antigo, mstatus = novo
+
+    # Seção crítica
+    # ...
+
+    # Restaurar mstatus original
+    csrrw x0, mstatus, x7 # restaura (descarta valor lido)</div>
+            <div class="example-explanation">
+                Salva, modifica e depois restaura o estado de um CSR.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Esta é a instrução base de máquina para manipulação de CSR</li>
+            <li>Operação atômica: leitura e escrita em um único ciclo</li>
+            <li>Se rd = x0, o valor antigo é descartado (equivalente a csrw)</li>
+            <li>Se rs1 = x0, escreve zero no CSR</li>
+            <li>Se rd = rs1, realiza swap atômico entre CSR e registrador</li>
+            <li>Útil para salvar estado antes de modificar CSR</li>
+            <li>Requer privilégios apropriados para acessar CSRs privilegiados</li>
+            <li>Alguns CSRs têm bits read-only que não são afetados pela escrita</li>
+            <li>Base para pseudo-instruções csrr, csrw</li>
+        </ul>
+    </div>
+</body>
+</html>

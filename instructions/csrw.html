@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRW - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../risc-v-assembly-pt.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRW - Escrever em CSR (Write to CSR)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrw csr, rs</div>
+
+        <h2>Descrição</h2>
+        <p>Copia o valor do registrador <code>rs</code> para o registrador de controle e status <code>csr</code>. O valor anterior do CSR é descartado. Esta é uma pseudo-instrução que é traduzida para <code>csrrw x0, csr, rs</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (I-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>csrrw x0, csr, rs</code></div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">csr = rs</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Definir o endereço do manipulador de trap</h3>
+            <div class="example-code"># Configurar o mtvec para apontar para o nosso handler
+la x5, trap_handler
+csrw mtvec, x5      # mtvec = endereço de trap_handler</div>
+            <div class="example-explanation">
+                Uso fundamental para configurar o sistema de interrupções, definindo para onde o processador deve saltar em caso de uma exceção ou interrupção.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Restaurar o endereço de retorno de uma exceção</h3>
+            <div class="example-code"># Suponha que x6 contém o endereço de retorno desejado
+csrw mepc, x6     # mepc = x6
+# A próxima instrução mret saltará para o endereço em x6</div>
+            <div class="example-explanation">
+                Dentro de um manipulador de exceções, `mepc` pode ser modificado antes de `mret` para alterar o fluxo de controle do programa principal.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 3: Inicializar um registrador de rascunho (scratch)</h3>
+            <div class="example-code"># Usar mscratch para passar um ponteiro para o handler
+la x10, area_de_dados_thread
+csrw mscratch, x10  # mscratch agora guarda o ponteiro</div>
+            <div class="example-explanation">
+                O registrador `mscratch` é comumente usado para guardar um valor (como um ponteiro de pilha ou de dados) que o manipulador de exceções pode precisar acessar sem ter que salvar registradores de propósito geral.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Esta é uma pseudo-instrução expandida para <code>csrrw x0, csr, rs</code>.</li>
+            <li>A operação é "write-only" do ponto de vista do código, pois o valor anterior do CSR é lido para `x0`, que é o registrador zero e, portanto, o valor é descartado.</li>
+            <li>É a maneira idiomática de escrever em um CSR quando o valor antigo não é necessário.</li>
+            <li>A operação é atômica (leitura-modificação-escrita).</li>
+            <li>Requer o nível de privilégio apropriado para acessar o CSR especificado.</li>
+        </ul>
+    </div>
+</body>
+</html>
