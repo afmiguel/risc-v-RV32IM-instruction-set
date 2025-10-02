@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BEQZ - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BEQZ - Desvio se Igual a Zero (Branch if Equal to Zero)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">beqz rs, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador <code>rs</code> com zero. Se for igual a zero, o fluxo de execução desvia (salta) para o endereço indicado pelo <code>rotulo</code>. Esta é uma pseudo-instrução que o montador traduz para <code>beq rs, zero, rotulo</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (B-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>beq rs, x0, rotulo</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if (rs == 0) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Verificar o final de uma string</h3>
+            <div class="example-code">imprime_string:
+    lb t0, 0(a0)      # Carrega um caractere da string
+    beqz t0, fim_imprime # Se for o byte nulo (0), termina
+    # ... código para imprimir o caractere ...
+    addi a0, a0, 1    # Avança para o próximo caractere
+    j imprime_string
+fim_imprime:
+    ret</div>
+            <div class="example-explanation">
+                `beqz` é perfeito para verificar o caractere nulo terminador de uma string em C.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Checar se o resultado de uma operação foi zero</h3>
+            <div class="example-code"># a2 = a0 - a1
+    sub a2, a0, a1
+    # if (a2 == 0) ...
+    beqz a2, resultado_zero
+    # ... código para resultado não-zero ...
+    j continua
+resultado_zero:
+    # ... código para resultado zero ...
+continua:</div>
+            <div class="example-explanation">
+                Frequentemente usado após operações aritméticas ou lógicas para testar se o resultado é zero.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução muito comum para simplificar o código.</li>
+            <li>O montador a converte em <code>beq rs, x0, rotulo</code>, usando o registrador `zero` (x0) que é sempre 0.</li>
+            <li>É o oposto da pseudo-instrução <code>bnez</code> (Branch if Not Equal to Zero).</li>
+        </ul>
+    </div>
+</body>
+</html>

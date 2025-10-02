@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SLTZ - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SLTZ - Setar se Menor que Zero (Set if Less Than Zero)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sltz rd, rs</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador de origem <code>rs</code> com zero, tratando-o como um número com sinal. Se o valor for menor que zero, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0. Esta é uma pseudo-instrução que o montador traduz para <code>slt rd, rs, zero</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (R-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>slt rd, rs, zero</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((signed)rs < 0) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Verificar se um número é negativo</h3>
+            <div class="example-code"># Suponha que a0 contém um resultado com sinal
+    sltz t0, a0       # t0 = 1 se a0 < 0, senão t0 = 0
+    bnez t0, eh_negativo # Pula se for negativo</div>
+            <div class="example-explanation">
+                `sltz` é uma maneira explícita de testar se um número é negativo. O bit de sinal de um número com sinal determina se ele é menor que zero.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Contar números negativos em um array</h3>
+            <div class="example-code"># a0 = ponteiro para array, a1 = tamanho, a2 = contador
+    li a2, 0
+loop:
+    lw t0, 0(a0)
+    sltz t1, t0       # t1 = 1 se t0 < 0
+    add a2, a2, t1    # Adiciona 0 ou 1 ao contador
+    addi a0, a0, 4
+    addi a1, a1, -1
+    bnez a1, loop</div>
+            <div class="example-explanation">
+                O resultado booleano (0 ou 1) de `sltz` pode ser somado diretamente a um contador.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução, traduzida para <code>slt rd, rs, zero</code>.</li>
+            <li>O resultado em `rd` é sempre 0 ou 1.</li>
+            <li>É o oposto da pseudo-instrução <code>sgtz</code> (Set if Greater Than Zero), com a exceção do caso de o valor ser zero.</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LB - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LB - Carregar Byte (Load Byte)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">lb rd, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega um byte (8 bits) da memória para o registrador de destino <code>rd</code>. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>. O byte carregado é então estendido com sinal para 32 bits antes de ser armazenado em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0000011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x0</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = sign_extend(mem[rs1 + imm])</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Carregar um caractere de uma string</h3>
+            <div class="example-code">.data
+texto: .string "RISC-V"
+
+.text
+    la t0, texto      # Carrega o endereço base da string
+    lb t1, 0(t0)      # Carrega o primeiro caractere 'R' (ASCII 82)
+    lb t2, 2(t0)      # Carrega o terceiro caractere 'S' (ASCII 83)</div>
+            <div class="example-explanation">
+                `lb` é ideal para manipular strings ou arrays de bytes, carregando um byte de cada vez.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Extensão de sinal</h3>
+            <div class="example-code"># Suponha que o endereço 0x1000 contém o byte 0x80 (-128)
+    li t0, 0x1000
+    lb t1, 0(t0)      # t1 = 0xFFFFFF80 (-128 em 32 bits)
+    lbu t2, 0(t0)     # Para comparação, lbu resultaria em 0x00000080 (128)</div>
+            <div class="example-explanation">
+                Este exemplo demonstra a principal característica da `lb`: o bit mais significativo do byte (bit 7) é copiado para todos os bits superiores do registrador de destino, preservando o valor numérico do byte com sinal.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits (faixa de -2048 a +2047).</li>
+            <li>A extensão de sinal torna `lb` adequada para carregar pequenos números com sinal.</li>
+            <li>Para carregar bytes sem sinal (tratando-os como valores de 0 a 255), use a instrução <code>lbu</code>.</li>
+            <li>O endereço de memória (rs1 + imm) não precisa estar alinhado.</li>
+        </ul>
+    </div>
+</body>
+</html>

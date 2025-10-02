@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SH - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SH - Armazenar Meia-Palavra (Store Halfword)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sh rs2, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Armazena a meia-palavra menos significativa (16 bits) do registrador de origem <code>rs2</code> na memória. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> S-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">mem[rs1 + imm] = rs2[15:0]</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Escrever em um array de `short`</h3>
+            <div class="example-code">.data
+array_shorts: .space 8 # Aloca 8 bytes para 4 shorts
+
+.text
+    la t0, array_shorts
+    li t1, -10          # Valor a ser armazenado
+    sh t1, 2(t0)        # Escreve -10 no segundo elemento do array
+                        # (offset de 2 bytes)</div>
+            <div class="example-explanation">
+                `sh` é a instrução correta para armazenar valores de 16 bits, como um tipo `short` em C, em um array.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Modificar campo de 16 bits em uma struct</h3>
+            <div class="example-code"># Suponha que t0 aponta para o início de uma struct
+# e o campo que queremos modificar está no offset +4
+    li t1, 2024         # Novo valor para o campo (e.g., ano)
+    sh t1, 4(t0)        # Armazena o valor 2024 no campo da struct</div>
+            <div class="example-explanation">
+                Útil para manipulação de estruturas de dados onde campos individuais têm 16 bits de tamanho.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O endereço de memória (rs1 + imm) deve ser alinhado a 2 bytes. Endereços não alinhados podem causar uma exceção.</li>
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits.</li>
+            <li>Apenas os 16 bits menos significativos de <code>rs2</code> são escritos na memória.</li>
+            <li>É a instrução de armazenamento padrão para dados de 16 bits.</li>
+        </ul>
+    </div>
+</body>
+</html>

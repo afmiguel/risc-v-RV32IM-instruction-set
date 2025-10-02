@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LHU - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LHU - Carregar Meia-Palavra sem Sinal (Load Halfword Unsigned)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">lhu rd, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega uma meia-palavra (16 bits) da memória para o registrador de destino <code>rd</code>. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>. A meia-palavra carregada é então estendida com zeros para 32 bits antes de ser armazenada em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0000011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x5</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = zero_extend(mem[rs1 + imm])</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Carregar de um array de `unsigned short`</h3>
+            <div class="example-code">.data
+array_ushorts: .half 0x8000, 0xFFFF
+
+.text
+    la t0, array_ushorts
+    lhu t1, 0(t0)     # Carrega o primeiro elemento (0x8000)
+                      # t1 conterá 0x00008000 (32768)
+    lhu t2, 2(t0)     # Carrega o segundo elemento (0xFFFF)
+                      # t2 conterá 0x0000FFFF (65535)</div>
+            <div class="example-explanation">
+                `lhu` é usado para acessar dados de 16 bits que devem ser tratados como valores positivos (0-65535).
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Diferença para LH</h3>
+            <div class="example-code"># Suponha que o endereço 0x1000 contém a meia-palavra 0x8000
+    li t0, 0x1000
+    lhu t1, 0(t0)     # t1 = 0x00008000 (32768) - Extensão com zero
+    lh t2, 0(t0)      # Para comparação, lh resultaria em 0xFFFF8000 (-32768)</div>
+            <div class="example-explanation">
+                `lhu` preenche os 16 bits superiores com 0 (extensão de zero), tratando a meia-palavra como um número sem sinal. `lh` preencheria com 1, pois o bit 15 da meia-palavra é 1.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O endereço de memória (rs1 + imm) deve ser alinhado a 2 bytes. Endereços não alinhados podem causar uma exceção.</li>
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits (-2048 a +2047).</li>
+            <li>Use `lhu` para dados de 16 bits que representam valores sem sinal (0 a 65535).</li>
+            <li>Para carregar dados de 16 bits com sinal, use a instrução <code>lh</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

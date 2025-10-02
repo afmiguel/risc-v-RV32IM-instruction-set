@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LA - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LA - Carregar Endereço (Load Address)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">la rd, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega o endereço de memória do <code>rotulo</code> no registrador de destino <code>rd</code>. Esta é uma pseudo-instrução que o montador expande para uma ou duas instruções de máquina (`AUIPC` e `ADDI`), dependendo da distância do rótulo.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução</div>
+            <div class="info-item"><strong>Tradução Típica:</strong> <code>auipc rd, imm_hi</code> + <code>addi rd, rd, imm_lo</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = endereço(rotulo)</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Carregar endereço de uma string</h3>
+            <div class="example-code">.data
+mensagem: .string "Olá, Mundo!"
+
+.text
+    la a0, mensagem   # Carrega o endereço da string em a0
+    li a7, 4          # Código para imprimir string (RARS)
+    ecall</div>
+            <div class="example-explanation">
+                Uso mais comum da instrução `la`: obter o endereço de um dado na memória para passá-lo para uma função ou syscall.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Obter endereço base de um array</h3>
+            <div class="example-code">.data
+meu_array: .word 10, 20, 30, 40
+
+.text
+    la t0, meu_array  # t0 agora aponta para o início do array
+    lw t1, 0(t0)      # Carrega o primeiro elemento (10)
+    lw t2, 4(t0)      # Carrega o segundo elemento (20)</div>
+            <div class="example-explanation">
+                `la` é fundamental para inicializar ponteiros que serão usados para acessar elementos de arrays e outras estruturas de dados.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução; não existe como uma instrução de máquina única.</li>
+            <li>O montador a converte em <code>auipc</code> (Add Upper Immediate to PC) e <code>addi</code> para calcular o endereço completo relativo ao PC.</li>
+            <li>Permite carregar qualquer endereço de 32 bits, superando a limitação de 12 bits dos imediatos de `addi`.</li>
+            <li>Essencial para código independente de posição (Position-Independent Code - PIC).</li>
+        </ul>
+    </div>
+</body>
+</html>

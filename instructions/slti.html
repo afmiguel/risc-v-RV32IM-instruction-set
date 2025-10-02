@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SLTI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SLTI - Setar se Menor Que, Imediato (Set if Less Than, Immediate)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">slti rd, rs1, imediato</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador <code>rs1</code> com o valor <code>imediato</code>, tratando ambos como números com sinal. Se <code>rs1</code> for menor que o <code>imediato</code>, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0010011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((signed)rs1 < (signed)imediato) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Verificar um limite superior</h3>
+            <div class="example-code">    # Suponha que t0 contém uma leitura de sensor
+    slti t1, t0, 100  # t1 = 1 se t0 < 100, senão t1 = 0
+    beqz t1, valor_ok # Pula se t1 for 0 (t0 >= 100)
+    # ... código para lidar com valor abaixo do limite ...
+valor_ok:</div>
+            <div class="example-explanation">
+                `slti` é útil para comparações diretas com constantes, sem precisar carregar a constante em outro registrador.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Comparação com número negativo</h3>
+            <div class="example-code">    li t0, -50
+    slti t1, t0, -40  # t1 = 1, porque -50 < -40</div>
+            <div class="example-explanation">
+                O valor imediato é estendido com sinal, permitindo comparações corretas com números negativos.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O valor <code>imediato</code> é um número com sinal de 12 bits (faixa de -2048 a +2047).</li>
+            <li>Realiza uma comparação com sinal. Para comparação sem sinal com um imediato, use <code>sltiu</code>.</li>
+            <li>O resultado em `rd` é sempre 0 ou 1.</li>
+        </ul>
+    </div>
+</body>
+</html>

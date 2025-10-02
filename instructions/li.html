@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LI - Carregar Imediato (Load Immediate)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">li rd, imediato</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega um valor imediato de 32 bits no registrador de destino <code>rd</code>. Esta é uma pseudo-instrução que o montador pode expandir para uma ou mais instruções de máquina, dependendo do tamanho do valor imediato.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução</div>
+            <div class="info-item"><strong>Tradução:</strong> Varia (e.g., <code>addi</code>, <code>lui</code>, <code>lui</code>+<code>addi</code>)</div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = imediato</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Carregar um valor pequeno</h3>
+            <div class="example-code"># Carregar o valor 100 em t0
+li t0, 100
+
+# O montador traduz para:
+# addi t0, zero, 100</div>
+            <div class="example-explanation">
+                Para valores que cabem em um imediato de 12 bits com sinal (-2048 a 2047), `li` é simplesmente um atalho para `addi` com o registrador `zero`.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Carregar um valor grande de 32 bits</h3>
+            <div class="example-code"># Carregar o valor 0x12345678 em t0
+li t0, 0x12345678
+
+# O montador traduz para:
+# lui t0, 0x12345         (carrega 20 bits superiores)
+# addi t0, t0, 0x678      (adiciona 12 bits inferiores)</div>
+            <div class="example-explanation">
+                Para valores que não cabem em 12 bits, `li` é expandida em duas instruções: `lui` (Load Upper Immediate) para carregar os 20 bits superiores, e `addi` para somar os 12 bits inferiores.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma das pseudo-instruções mais usadas em assembly RISC-V.</li>
+            <li>Abstrai a complexidade de carregar valores de 32 bits, escolhendo a sequência de instrução mais eficiente.</li>
+            <li>O valor imediato pode ser expresso em decimal, hexadecimal ou binário.</li>
+            <li>É a maneira padrão de colocar constantes em registradores.</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BNEZ - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BNEZ - Desvio se Não For Zero (Branch if Not Equal to Zero)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">bnez rs, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador <code>rs</code> com zero. Se não for igual a zero, o fluxo de execução desvia (salta) para o endereço indicado pelo <code>rotulo</code>. Esta é uma pseudo-instrução que o montador traduz para <code>bne rs, zero, rotulo</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (B-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>bne rs, x0, rotulo</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if (rs != 0) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Loop `do-while`</h3>
+            <div class="example-code">    li t0, 10 # contador
+loop:
+    # Corpo do loop que executa pelo menos uma vez
+    # ...
+    addi t0, t0, -1
+    bnez t0, loop # Continua enquanto o contador não for zero</div>
+            <div class="example-explanation">
+                `bnez` é ideal para loops que precisam continuar enquanto um contador for diferente de zero.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Checar se um ponteiro não é nulo</h3>
+            <div class="example-code"># Suponha que a0 contém um ponteiro
+    bnez a0, ponteiro_valido # Salta se o ponteiro não for nulo
+    # ... código para tratar ponteiro nulo ...
+    j fim
+ponteiro_valido:
+    # ... código para usar o ponteiro ...
+fim:</div>
+            <div class="example-explanation">
+                Uma verificação de segurança comum antes de desreferenciar um ponteiro para evitar falhas de acesso à memória.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução muito comum para simplificar o código.</li>
+            <li>O montador a converte em <code>bne rs, x0, rotulo</code>.</li>
+            <li>É o oposto da pseudo-instrução <code>beqz</code> (Branch if Equal to Zero).</li>
+        </ul>
+    </div>
+</body>
+</html>

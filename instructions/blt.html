@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BLT - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BLT - Desvio se Menor Que (Branch if Less Than)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">blt rs1, rs2, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code> como inteiros com sinal. Se o valor em <code>rs1</code> for menor que o valor em <code>rs2</code>, o fluxo de execução desvia para o endereço indicado pelo <code>rotulo</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> B-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x4</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((signed)rs1 < (signed)rs2) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Loop `for` crescente</h3>
+            <div class="example-code">    li t0, 10         # t0 = limite = 10
+    li t1, 0          # t1 = i = 0
+loop:
+    # Corpo do loop
+    addi t1, t1, 1    # i++
+    blt t1, t0, loop  # Continua o loop enquanto i < 10</div>
+            <div class="example-explanation">
+                `blt` é ideal para loops que continuam enquanto um contador é menor que um limite.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Checar se um valor é negativo</h3>
+            <div class="example-code"># if (a0 < 0) then ...
+    blt a0, zero, eh_negativo
+    # ... código para a0 >= 0 ...
+    j continua
+eh_negativo:
+    # ... código para a0 < 0 ...
+continua:</div>
+            <div class="example-explanation">
+                Comparar com o registrador `zero` é a forma padrão de testar se um número com sinal é negativo.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Realiza uma comparação com sinal. Para comparação sem sinal, use <code>bltu</code>.</li>
+            <li>A pseudo-instrução <code>bltz rs, rotulo</code> (Branch if Less Than Zero) é implementada como <code>blt rs, zero, rotulo</code>.</li>
+            <li>É o oposto de <code>bge</code> (Branch if Greater or Equal).</li>
+        </ul>
+    </div>
+</body>
+</html>

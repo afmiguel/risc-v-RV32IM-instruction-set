@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SB - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SB - Armazenar Byte (Store Byte)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sb rs2, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Armazena o byte menos significativo (8 bits) do registrador de origem <code>rs2</code> na memória. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> S-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x0</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">mem[rs1 + imm] = rs2[7:0]</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Escrever um caractere em uma string</h3>
+            <div class="example-code">.data
+minha_string: .space 10 # Aloca 10 bytes
+
+.text
+    la t0, minha_string
+    li t1, 'A'          # Carrega o código ASCII de 'A' em t1
+    sb t1, 0(t0)        # Escreve 'A' no primeiro byte da string</div>
+            <div class="example-explanation">
+                `sb` é usado para escrever bytes individuais na memória, ideal para modificar strings ou preencher buffers de bytes.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Modificar um pixel em uma imagem</h3>
+            <div class="example-code"># Suponha que t0 contém o endereço de um buffer de imagem
+# e t1 contém o novo valor de cor (0-255) para um pixel
+    li t2, 100          # Offset do pixel a ser modificado
+    sb t1, 100(t0)      # Modifica o 101º byte do buffer da imagem</div>
+            <div class="example-explanation">
+                Em processamento de imagem ou gráficos, `sb` pode ser usado para modificar bytes individuais que representam cores ou outros atributos de pixel.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits, dividido em dois campos na codificação da instrução.</li>
+            <li>Apenas os 8 bits menos significativos de <code>rs2</code> são escritos na memória.</li>
+            <li>O endereço de memória (rs1 + imm) não precisa estar alinhado.</li>
+            <li>É a instrução fundamental para escrita de dados de 8 bits.</li>
+        </ul>
+    </div>
+</body>
+</html>

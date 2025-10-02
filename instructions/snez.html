@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SNEZ - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SNEZ - Setar se Não For Zero (Set if Not Equal to Zero)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">snez rd, rs</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador de origem <code>rs</code> com zero. Se o valor for diferente de zero, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0. Esta é uma pseudo-instrução que o montador traduz para <code>sltu rd, zero, rs</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (R-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>sltu rd, zero, rs</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if (rs != 0) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Normalizar um valor para booleano</h3>
+            <div class="example-code"># Suponha que a0 contém um valor qualquer
+    snez t0, a0       # t0 = 1 se a0 for qualquer valor diferente de 0
+                      # t0 = 0 se a0 for 0</div>
+            <div class="example-explanation">
+                `snez` é útil para converter qualquer valor não-zero em 1, e zero em 0, o que é útil para normalizar flags ou valores booleanos.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Checar se um ponteiro é válido</h3>
+            <div class="example-code"># a0 contém um ponteiro
+    snez t0, a0       # t0 = 1 se o ponteiro não for nulo
+    beqz t0, ponteiro_invalido</div>
+            <div class="example-explanation">
+                Testa se um ponteiro é não-nulo, definindo uma flag que pode ser usada para desvio condicional.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução, traduzida para <code>sltu rd, zero, rs</code>. A lógica é que se `0` sem sinal é menor que `rs` sem sinal, então `rs` não pode ser `0`.</li>
+            <li>O resultado em `rd` é sempre 0 ou 1.</li>
+            <li>É o oposto da pseudo-instrução <code>seqz</code> (Set if Equal to Zero).</li>
+        </ul>
+    </div>
+</body>
+</html>

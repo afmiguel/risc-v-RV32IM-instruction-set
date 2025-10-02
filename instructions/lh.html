@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LH - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LH - Carregar Meia-Palavra (Load Halfword)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">lh rd, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega uma meia-palavra (16 bits) da memória para o registrador de destino <code>rd</code>. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>. A meia-palavra carregada é então estendida com sinal para 32 bits antes de ser armazenada em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0000011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = sign_extend(mem[rs1 + imm])</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Carregar de um array de `short`</h3>
+            <div class="example-code">.data
+array_shorts: .half 100, -200, 300
+
+.text
+    la t0, array_shorts
+    lh t1, 2(t0)      # Carrega o segundo elemento (-200)
+                      # O offset é 2 porque cada .half ocupa 2 bytes</div>
+            <div class="example-explanation">
+                `lh` é usado para acessar arrays de inteiros de 16 bits (como `short` em C), preservando seu sinal.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Extensão de sinal</h3>
+            <div class="example-code"># Suponha que o endereço 0x1000 contém a meia-palavra 0x8000 (-32768)
+    li t0, 0x1000
+    lh t1, 0(t0)      # t1 = 0xFFFF8000 (-32768 em 32 bits)
+    lhu t2, 0(t0)     # Para comparação, lhu resultaria em 0x00008000 (32768)</div>
+            <div class="example-explanation">
+                A extensão de sinal copia o bit 15 da meia-palavra para os 16 bits superiores de `rd`, mantendo o valor numérico com sinal.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O endereço de memória (rs1 + imm) deve ser alinhado a 2 bytes. Endereços não alinhados podem causar uma exceção de desalinhamento.</li>
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits (-2048 a +2047).</li>
+            <li>Use `lh` para dados de 16 bits que representam valores com sinal (-32768 a 32767).</li>
+            <li>Para carregar dados de 16 bits sem sinal, use a instrução <code>lhu</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

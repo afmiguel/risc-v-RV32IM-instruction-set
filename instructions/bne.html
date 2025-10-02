@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BNE - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BNE - Desvio se Não Igual (Branch if Not Equal)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">bne rs1, rs2, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code>. Se não forem iguais, o fluxo de execução desvia (salta) para o endereço indicado pelo <code>rotulo</code>. Caso contrário, a execução continua na próxima instrução sequencial.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> B-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if (rs1 != rs2) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Loop com contador decrescente</h3>
+            <div class="example-code">    li t0, 10         # t0 = i = 10
+loop:
+    # Corpo do loop
+    addi t0, t0, -1   # i--
+    bne t0, zero, loop # Continua o loop enquanto i != 0</div>
+            <div class="example-explanation">
+                `bne` é comumente usado para continuar um loop até que um contador chegue a zero.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Estrutura if-else</h3>
+            <div class="example-code"># if (a0 != 5) then ... else ...
+    li t0, 5
+    beq a0, t0, else_bloco # Se a0 == 5, pula para o bloco else
+
+if_bloco:
+    # Código para a0 != 5
+    j fim_if
+
+else_bloco:
+    # Código para a0 == 5
+
+fim_if:</div>
+            <div class="example-explanation">
+                Para implementar um if-else, geralmente se usa a condição de desvio oposta (`beq` neste caso) para pular para o bloco `else`.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O <code>rotulo</code> é convertido pelo montador em um deslocamento (offset) relativo ao PC.</li>
+            <li>O alcance do deslocamento é de ±4 KB.</li>
+            <li>`bne` funciona para operandos com ou sem sinal.</li>
+            <li>A pseudo-instrução <code>bnez rs, rotulo</code> (desvio se não for zero) é implementada como <code>bne rs, zero, rotulo</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

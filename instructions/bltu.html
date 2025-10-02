@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BLTU - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BLTU - Desvio se Menor Que, sem Sinal (Branch if Less Than, Unsigned)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">bltu rs1, rs2, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code> como inteiros sem sinal. Se o valor em <code>rs1</code> for menor que o valor em <code>rs2</code>, o fluxo de execução desvia para o endereço indicado pelo <code>rotulo</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> B-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x6</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((unsigned)rs1 < (unsigned)rs2) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Iterar sobre um buffer de memória</h3>
+            <div class="example-code">    la t0, buffer_inicio
+    la t1, buffer_fim
+loop:
+    # Processa o dado no endereço t0
+    # ...
+    addi t0, t0, 1
+    bltu t0, t1, loop # Continua enquanto o ponteiro atual for menor que o final</div>
+            <div class="example-explanation">
+                Como endereços de memória são sempre sem sinal, `bltu` é a instrução correta para verificar se um ponteiro ainda está dentro dos limites de um buffer.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Diferença para BLT</h3>
+            <div class="example-code">    li t0, -1         # t0 = 0xFFFFFFFF
+    li t1, 1          # t1 = 0x00000001
+
+    blt t0, t1, com_sinal_menor # DEVE saltar (-1 < 1)
+    j continua
+com_sinal_menor:
+    # Este bloco será executado
+
+continua:
+    bltu t0, t1, sem_sinal_menor # Não deve saltar (0xFFFFFFFF > 1)
+    # ...</div>
+            <div class="example-explanation">
+                Este exemplo mostra como `blt` (com sinal) e `bltu` (sem sinal) produzem resultados diferentes para o mesmo padrão de bits quando um deles representa um número negativo.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Realiza uma comparação sem sinal. Para comparação com sinal, use <code>blt</code>.</li>
+            <li>Essencial para aritmética de ponteiros e ao trabalhar com contagens ou tamanhos.</li>
+            <li>É o oposto de <code>bgeu</code> (Branch if Greater or Equal, Unsigned).</li>
+        </ul>
+    </div>
+</body>
+</html>

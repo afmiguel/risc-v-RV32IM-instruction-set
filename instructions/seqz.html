@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SEQZ - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SEQZ - Setar se Igual a Zero (Set if Equal to Zero)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">seqz rd, rs</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador de origem <code>rs</code> com zero. Se o valor for igual a zero, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0. Esta é uma pseudo-instrução que o montador traduz para <code>sltiu rd, rs, 1</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução (I-type)</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>sltiu rd, rs, 1</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if (rs == 0) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Testar o resultado de uma função</h3>
+            <div class="example-code">    jal minha_funcao  # Função retorna um código de erro em a0
+    seqz a1, a0       # a1 = 1 se a0 for 0 (sucesso), senão a1 = 0 (erro)
+    bnez a1, sucesso  # Pula se a1 != 0 (ou seja, se a0 era 0)</div>
+            <div class="example-explanation">
+                `seqz` é útil para converter um resultado de zero/não-zero em um valor booleano (0 ou 1), que pode ser facilmente testado.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Inverter um valor booleano (0 ou 1)</h3>
+            <div class="example-code"># Suponha que t0 contém 0 ou 1
+    seqz t0, t0   # Se t0 era 1, vira 0. Se era 0, vira 1.
+                  # Funciona como uma negação lógica (NOT).</div>
+            <div class="example-explanation">
+                Aplicar `seqz` a um valor que só pode ser 0 ou 1 efetivamente inverte esse valor, funcionando como um `not` lógico.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução, traduzida para <code>sltiu rd, rs, 1</code>. A lógica é que se um número sem sinal `rs` é menor que 1, ele só pode ser 0.</li>
+            <li>O resultado em `rd` é sempre 0 ou 1.</li>
+            <li>É o oposto da pseudo-instrução <code>snez</code> (Set if Not Equal to Zero).</li>
+        </ul>
+    </div>
+</body>
+</html>

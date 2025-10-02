@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SW - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SW - Armazenar Palavra (Store Word)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sw rs2, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Armazena a palavra de 32 bits do registrador de origem <code>rs2</code> na memória. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> S-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">mem[rs1 + imm] = rs2</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Salvar um registrador na pilha (push)</h3>
+            <div class="example-code"># Empilhar o registrador ra antes de uma chamada de função
+    addi sp, sp, -4   # Abre espaço na pilha
+    sw ra, 0(sp)      # Salva ra no topo da pilha</div>
+            <div class="example-explanation">
+                Este é um dos usos mais comuns de `sw`: salvar o estado de um registrador na pilha. Essencial para o prólogo de funções que chamam outras funções.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Escrever em um array de inteiros</h3>
+            <div class="example-code">.data
+meu_array: .space 16 # Aloca 16 bytes para 4 words
+
+.text
+    la t0, meu_array
+    li t1, 12345
+    sw t1, 8(t0)      # Escreve 12345 no terceiro elemento do array
+                      # (offset de 8 bytes)</div>
+            <div class="example-explanation">
+                `sw` é a instrução padrão para escrever valores de 32 bits em posições de memória, como ao preencher um array de inteiros.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O endereço de memória (rs1 + imm) deve ser alinhado a 4 bytes. Endereços não alinhados podem causar uma exceção.</li>
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits.</li>
+            <li>É a instrução de armazenamento mais comum para dados de 32 bits.</li>
+            <li>Existe uma pseudo-instrução <code>sw rs, rotulo</code> que é expandida pelo montador para <code>auipc</code> e <code>sw</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

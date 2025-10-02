@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BEQ - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BEQ - Desvio se Igual (Branch if Equal)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">beq rs1, rs2, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code>. Se forem iguais, o fluxo de execução desvia (salta) para o endereço indicado pelo <code>rotulo</code>. Caso contrário, a execução continua na próxima instrução sequencial.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> B-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x0</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if (rs1 == rs2) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Loop com contador</h3>
+            <div class="example-code">    li t0, 10         # t0 = contador final
+    li t1, 0          # t1 = i = 0
+loop:
+    # Corpo do loop
+    addi t1, t1, 1    # i++
+    bne t1, t0, loop  # Continua se i != 10
+    # Fim do loop
+
+# Usando beq para sair:
+    li t1, 0
+loop2:
+    beq t1, t0, fim_loop # Sai do loop se i == 10
+    # Corpo do loop
+    addi t1, t1, 1
+    j loop2
+fim_loop:</div>
+            <div class="example-explanation">
+                `beq` é frequentemente usado como a condição de término de um loop, saltando para fora do loop quando um contador atinge um valor específico.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Estrutura if-then</h3>
+            <div class="example-code"># if (a0 == a1) then a2 = 1
+    bne a0, a1, fim_if # Pula o bloco if se a0 != a1
+    li a2, 1
+fim_if:</div>
+            <div class="example-explanation">
+                Em assembly, as condições são frequentemente invertidas. Para executar um bloco `if` quando os valores são iguais, usamos a instrução de desvio oposta (`bne`) para pular o bloco caso a condição seja falsa.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O <code>rotulo</code> é convertido pelo montador em um deslocamento (offset) relativo ao PC (Program Counter).</li>
+            <li>O formato B-type tem um alcance de deslocamento de ±4 KB.</li>
+            <li>`beq` funciona para operandos com ou sem sinal, pois a comparação de igualdade é a mesma.</li>
+            <li>A pseudo-instrução <code>beqz rs, rotulo</code> (desvio se igual a zero) é implementada como <code>beq rs, zero, rotulo</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

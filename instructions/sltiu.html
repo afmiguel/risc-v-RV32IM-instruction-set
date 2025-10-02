@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SLTIU - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SLTIU - Setar se Menor Que, Imediato, sem Sinal (Set if Less Than, Immediate, Unsigned)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sltiu rd, rs1, imediato</div>
+
+        <h2>Descrição</h2>
+        <p>Compara o valor no registrador <code>rs1</code> com o valor <code>imediato</code>, tratando ambos como números sem sinal. Se <code>rs1</code> for menor que o <code>imediato</code>, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0010011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x3</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((unsigned)rs1 < (unsigned)imediato) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Verificar um limite superior (sem sinal)</h3>
+            <div class="example-code">    # Suponha que t0 contém um tamanho ou contagem
+    sltiu t1, t0, 2048 # t1 = 1 se t0 < 2048
+    # O imediato é tratado como um número sem sinal (0 a 4095)
+    # mas a comparação é rs1 < imediato, então o imediato 1
+    # é um caso especial.</div>
+            <div class="example-explanation">
+                `sltiu` é usado para comparações com constantes quando os valores são inerentemente sem sinal, como tamanhos, contagens ou endereços.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Implementando `seqz`</h3>
+            <div class="example-code"># seqz rd, rs (pseudo-instrução)
+# é implementado como:
+    sltiu rd, rs, 1 # rd = 1 se rs < 1 (sem sinal), o que só é verdade se rs = 0.</div>
+            <div class="example-explanation">
+                A pseudo-instrução `seqz` (Set if Equal to Zero) é um caso especial de `sltiu`. Comparar se um número sem sinal é menor que 1 é o mesmo que testar se ele é 0.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O valor <code>imediato</code> é um número de 12 bits, que na comparação é estendido com zero para 32 bits.</li>
+            <li>Realiza uma comparação sem sinal. Para comparação com sinal com um imediato, use <code>slti</code>.</li>
+            <li>A instrução `sltiu rd, rs, 0` nunca pode ser verdadeira e sempre resultará em 0, pois nenhum número sem sinal é menor que 0.</li>
+            <li>`sltiu rd, rs, 1` é a implementação canônica da pseudo-instrução `seqz rd, rs`.</li>
+        </ul>
+    </div>
+</body>
+</html>

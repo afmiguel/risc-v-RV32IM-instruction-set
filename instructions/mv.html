@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução MV - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>MV - Mover Registrador (Move)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">mv rd, rs</div>
+
+        <h2>Descrição</h2>
+        <p>Copia o valor do registrador de origem <code>rs</code> para o registrador de destino <code>rd</code>. Esta é uma pseudo-instrução que é traduzida para <code>addi rd, rs, 0</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> Pseudo-instrução</div>
+            <div class="info-item"><strong>Tradução:</strong> <code>addi rd, rs, 0</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = rs</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Passar argumentos para uma função</h3>
+            <div class="example-code"># Suponha que t0 contém um valor que queremos passar para uma função
+    mv a0, t0   # Copia o valor de t0 para a0 (primeiro argumento)
+    jal minha_funcao</div>
+            <div class="example-explanation">
+                De acordo com a convenção de chamada do RISC-V, os argumentos são passados nos registradores `a0`-`a7`. `mv` é a maneira padrão de mover dados para esses registradores antes de uma chamada de função.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Salvar um valor de retorno</h3>
+            <div class="example-code">    jal calcula_valor # Função retorna um valor em a0
+    mv t1, a0       # Salva o valor de retorno em t1 para uso posterior</div>
+            <div class="example-explanation">
+                Após uma chamada de função, o valor de retorno (em `a0`) é frequentemente movido para um registrador salvo (`s*`) ou temporário (`t*`) para que `a0` fique livre para a próxima chamada.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma pseudo-instrução muito comum, traduzida para <code>addi rd, rs, 0</code>.</li>
+            <li>Não há uma instrução de máquina `MV` real no ISA base do RISC-V.</li>
+            <li>É a maneira mais legível e padrão de copiar o conteúdo de um registrador para outro.</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LW - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LW - Carregar Palavra (Load Word)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">lw rd, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega uma palavra (32 bits) da memória para o registrador de destino <code>rd</code>. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>. Como o registrador já tem 32 bits, nenhuma extensão de sinal ou de zero é necessária.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0000011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = mem[rs1 + imm]</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Carregar de um array de `int`</h3>
+            <div class="example-code">.data
+array_ints: .word 1000, -2000, 3000
+
+.text
+    la t0, array_ints
+    lw t1, 4(t0)      # Carrega o segundo elemento (-2000)
+                      # O offset é 4 porque cada .word ocupa 4 bytes</div>
+            <div class="example-explanation">
+                `lw` é a instrução padrão para carregar valores de 32 bits da memória, como inteiros de um array ou campos de uma struct.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Desreferenciar um ponteiro</h3>
+            <div class="example-code">.data
+ponteiro: .word valor
+valor:    .word 0xDEADBEEF
+
+.text
+    la t0, ponteiro
+    lw t1, 0(t0)      # t1 agora contém o endereço de 'valor'
+    lw t2, 0(t1)      # t2 agora contém o dado 0xDEADBEEF</div>
+            <div class="example-explanation">
+                Este exemplo mostra o carregamento de um ponteiro e, em seguida, o uso desse ponteiro para carregar o valor para o qual ele aponta.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O endereço de memória (rs1 + imm) deve ser alinhado a 4 bytes. Endereços não alinhados podem causar uma exceção de desalinhamento.</li>
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits (-2048 a +2047).</li>
+            <li>É a instrução de carregamento mais comum para dados de 32 bits.</li>
+            <li>Existe uma pseudo-instrução <code>lw rd, rotulo</code> que é expandida pelo montador para <code>auipc</code> e <code>lw</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

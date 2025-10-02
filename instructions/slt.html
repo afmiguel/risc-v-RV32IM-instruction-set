@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SLT - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SLT - Setar se Menor Que (Set if Less Than)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">slt rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code> como inteiros com sinal. Se o valor em <code>rs1</code> for menor que o valor em <code>rs2</code>, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x00</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((signed)rs1 < (signed)rs2) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Comparação de dois números com sinal</h3>
+            <div class="example-code">    li t0, -10
+    li t1, 10
+    slt t2, t0, t1    # t2 = 1, porque -10 < 10</div>
+            <div class="example-explanation">
+                `slt` realiza uma comparação aritmética e define o registrador de destino como um booleano (0 ou 1).
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Implementando `bgt` (Branch if Greater Than)</h3>
+            <div class="example-code"># bgt rs1, rs2, rotulo (pseudo-instrução)
+# é implementado como:
+    slt t0, rs2, rs1  # t0 = 1 se rs2 < rs1 (ou seja, rs1 > rs2)
+    bnez t0, rotulo   # Desvia se t0 != 0</div>
+            <div class="example-explanation">
+                Muitas pseudo-instruções de desvio condicional são implementadas usando uma instrução `slt` ou `sltu` seguida por um `bnez` ou `beqz`.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Realiza uma comparação com sinal. Para comparação sem sinal, use <code>sltu</code>.</li>
+            <li>O resultado em `rd` é sempre 0 ou 1.</li>
+            <li>É a base para várias pseudo-instruções de comparação e desvio, como `sgt` (Set if Greater Than), `ble` (Branch if Less or Equal), etc.</li>
+        </ul>
+    </div>
+</body>
+</html>

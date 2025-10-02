@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução SLTU - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>SLTU - Setar se Menor Que, sem Sinal (Set if Less Than, Unsigned)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">sltu rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code> como inteiros sem sinal. Se o valor em <code>rs1</code> for menor que o valor em <code>rs2</code>, armazena 1 no registrador de destino <code>rd</code>. Caso contrário, armazena 0.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x3</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x00</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((unsigned)rs1 < (unsigned)rs2) then
+    rd = 1
+else
+    rd = 0
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Comparar ponteiros de memória</h3>
+            <div class="example-code">    la t0, array_inicio
+    la t1, array_fim
+    # Suponha que t2 é o ponteiro atual
+    sltu t3, t2, t1  # t3 = 1 se o ponteiro atual ainda não chegou ao fim</div>
+            <div class="example-explanation">
+                Endereços de memória são sempre positivos, então comparações entre eles devem usar a forma sem sinal (`sltu` e `sltiu`).
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Diferença para SLT</h3>
+            <div class="example-code">    li t0, -1         # t0 = 0xFFFFFFFF
+    li t1, 1          # t1 = 0x00000001
+
+    slt t2, t0, t1    # t2 = 1, porque (signed)-1 < (signed)1
+    sltu t3, t0, t1   # t3 = 0, porque (unsigned)0xFFFFFFFF > (unsigned)1</div>
+            <div class="example-explanation">
+                Este exemplo clássico demonstra a importância de escolher a instrução correta. Como um número com sinal, -1 é menor que 1. Como um número sem sinal, 0xFFFFFFFF é o maior valor possível e é muito maior que 1.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Realiza uma comparação sem sinal. Para comparação com sinal, use <code>slt</code>.</li>
+            <li>O resultado em `rd` é sempre 0 ou 1.</li>
+            <li>Essencial para aritmética de ponteiros e comparações de tamanhos ou contagens.</li>
+        </ul>
+    </div>
+</body>
+</html>

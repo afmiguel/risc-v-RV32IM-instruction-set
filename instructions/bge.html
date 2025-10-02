@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução BGE - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>BGE - Desvio se Maior ou Igual (Branch if Greater or Equal)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">bge rs1, rs2, rotulo</div>
+
+        <h2>Descrição</h2>
+        <p>Compara os valores nos registradores <code>rs1</code> e <code>rs2</code> como inteiros com sinal. Se o valor em <code>rs1</code> for maior ou igual ao valor em <code>rs2</code>, o fluxo de execução desvia para o endereço indicado pelo <code>rotulo</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> B-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1100011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x5</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">if ((signed)rs1 >= (signed)rs2) then
+    PC = PC + offset
+endif</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Loop decrescente até zero</h3>
+            <div class="example-code">    li t0, 10         # Inicia o contador t0 com 10
+loop:
+    # Corpo do loop
+    addi t0, t0, -1   # Decrementa o contador
+    bge t0, zero, loop # Continua o loop enquanto t0 >= 0</div>
+            <div class="example-explanation">
+                `bge` com o registrador `zero` é uma forma eficaz de fazer um loop enquanto um contador com sinal for não-negativo.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Checar um limite mínimo</h3>
+            <div class="example-code"># if (temperatura >= temp_minima) then ativar_ventoinha
+    li t1, -10        # temp_minima = -10
+    # Suponha que t0 contém a temperatura atual
+    blt t0, t1, nao_ativa # Pula se temperatura < temp_minima
+ativar_ventoinha:
+    # ... código para ativar a ventoinha ...
+nao_ativa:</div>
+            <div class="example-explanation">
+                Para implementar um bloco `if (a >= b)`, a abordagem comum em assembly é usar a condição oposta (`blt`) para pular o bloco.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Realiza uma comparação com sinal. Para comparação sem sinal, use <code>bgeu</code>.</li>
+            <li>A pseudo-instrução <code>bgez rs, rotulo</code> (Branch if Greater or Equal to Zero) é implementada como <code>bge rs, zero, rotulo</code>.</li>
+            <li>É o oposto de <code>blt</code> (Branch if Less Than).</li>
+        </ul>
+    </div>
+</body>
+</html>

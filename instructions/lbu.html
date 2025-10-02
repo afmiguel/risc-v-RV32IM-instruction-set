@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LBU - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LBU - Carregar Byte sem Sinal (Load Byte Unsigned)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">lbu rd, imm(rs1)</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega um byte (8 bits) da memória para o registrador de destino <code>rd</code>. O endereço de memória é calculado somando o deslocamento imediato <code>imm</code> ao valor no registrador base <code>rs1</code>. O byte carregado é então estendido com zeros para 32 bits antes de ser armazenado em <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0000011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x4</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = zero_extend(mem[rs1 + imm])</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Ler dados de um buffer</h3>
+            <div class="example-code">.data
+buffer: .byte 0x1A, 0x80, 0xFF
+
+.text
+    la t0, buffer
+    lbu t1, 1(t0)     # Carrega o segundo byte (0x80)
+                      # t1 conterá 0x00000080 (128 decimal)</div>
+            <div class="example-explanation">
+                `lbu` é usado quando o byte representa um valor que deve ser tratado como positivo (0-255), como um pixel de uma imagem em escala de cinza ou um dado de um sensor.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Diferença para LB</h3>
+            <div class="example-code"># Suponha que o endereço 0x1000 contém o byte 0x80 (-128)
+    li t0, 0x1000
+    lbu t1, 0(t0)     # t1 = 0x00000080 (128) - Extensão com zero
+    lb t2, 0(t0)      # Para comparação, lb resultaria em 0xFFFFFF80 (-128)</div>
+            <div class="example-explanation">
+                Este exemplo mostra a diferença crucial: `lbu` preenche os 24 bits superiores com 0 (extensão de zero), tratando o byte como um número sem sinal. `lb` preencheria com 1, pois o bit 7 do byte é 1.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O deslocamento <code>imm</code> é um valor com sinal de 12 bits (faixa de -2048 a +2047).</li>
+            <li>A extensão com zero torna `lbu` ideal para carregar bytes que representam valores sem sinal (0 a 255).</li>
+            <li>Para carregar bytes com sinal (tratando-os como valores de -128 a 127), use a instrução <code>lb</code>.</li>
+            <li>O endereço de memória (rs1 + imm) não precisa estar alinhado.</li>
+        </ul>
+    </div>
+</body>
+</html>
