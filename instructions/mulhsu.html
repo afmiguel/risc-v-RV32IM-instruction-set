@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução MULHSU - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>MULHSU - Multiplicar, Parte Alta (Signed x Unsigned)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">mulhsu rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Multiplica o valor no registrador <code>rs1</code> (tratado como um número com sinal) pelo valor no registrador <code>rs2</code> (tratado como um número sem sinal). O resultado é um valor de 64 bits, e os 32 bits mais significativos (a parte alta) são armazenados no registrador de destino <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x01</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = ((signed)rs1 * (unsigned)rs2) >> 32</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Multiplicação de sinais mistos</h3>
+            <div class="example-code"># Multiplicar -1 (0xFFFFFFFF) por 2 (0x00000002)
+li t0, -1
+li t1, 2
+
+mulhsu t2, t0, t1 # t2 = 0xFFFFFFFF (parte alta do resultado -2 em 64 bits)
+mul t3, t0, t1    # t3 = 0xFFFFFFFE (parte baixa do resultado -2)</div>
+            <div class="example-explanation">
+                Esta instrução é útil em algoritmos específicos onde um operando é com sinal e o outro não, como em certas operações de ponto fixo ou criptografia.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Faz parte da extensão "M" do RISC-V.</li>
+            <li>O primeiro operando (`rs1`) é com sinal, e o segundo (`rs2`) é sem sinal.</li>
+            <li>Para obter os 32 bits inferiores, a instrução <code>mul</code> pode ser usada, pois o resultado da parte baixa é o mesmo independentemente do sinal dos operandos.</li>
+        </ul>
+    </div>
+</body>
+</html>

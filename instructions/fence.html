@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução FENCE - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>FENCE - Barreira de Memória</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">fence pred, succ</div>
+
+        <h2>Descrição</h2>
+        <p>A instrução <code>fence</code> ordena a execução de operações de memória e I/O. Garante que todas as operações de memória especificadas no conjunto `pred` (predecessor), realizadas por esta thread, sejam concluídas antes de qualquer operação de memória no conjunto `succ` (sucessor) da mesma thread.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0001111</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x0</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box"># Ordena operações de memória</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Sincronização entre threads</h3>
+            <div class="example-code"># Thread 1:
+    sw a0, 0(t0)      # Escreve dados
+    fence w, w        # Garante que a escrita seja visível
+    sw a1, 0(t1)      # Escreve flag de conclusão
+
+# Thread 2:
+loop:
+    lw t2, 0(t1)      # Lê a flag
+    bnez t2, loop     # Espera a flag ser setada
+    fence r, r        # Garante que leituras subsequentes vejam os dados
+    lw a2, 0(t0)      # Lê os dados com segurança</div>
+            <div class="example-explanation">
+                `fence` é crucial em sistemas multicore para garantir que as escritas de uma CPU se tornem visíveis para outras CPUs na ordem correta.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Os operandos `pred` e `succ` são máscaras de 4 bits que especificam os tipos de operação: I (I/O), O (escrita), R (leitura), W (escrita).</li>
+            <li>`fence i, o` garante que leituras de I/O anteriores terminem antes de escritas de memória posteriores.</li>
+            <li>Uma `fence` completa (`fence r,w,o,i, r,w,o,i`) é a barreira mais forte.</li>
+            <li>É uma instrução complexa, geralmente usada em programação de baixo nível, como em drivers ou sistemas operacionais.</li>
+        </ul>
+    </div>
+</body>
+</html>

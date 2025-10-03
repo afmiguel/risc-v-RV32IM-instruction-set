@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRRCI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRRCI - Leitura e Clear de Bits em CSR com Imediato</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrrci rd, csr, zimm</div>
+
+        <h2>Descrição</h2>
+        <p>Executa uma operação atômica de leitura-modificação-escrita. Lê o valor do CSR <code>csr</code> e o armazena em <code>rd</code>. O valor antigo do CSR é então atualizado fazendo uma operação AND com a máscara invertida do valor imediato de 5 bits estendido com zero (<code>zimm</code>). Isso efetivamente "limpa" os bits no CSR especificados por <code>zimm</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type (System)</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x7</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">temp = csr
+csr = temp & ~zero_extend(zimm)
+rd = temp</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Limpar uma flag de status</h3>
+            <div class="example-code"># Limpar o bit 2 de um CSR de status e salvar o valor antigo
+csrrci t0, 0x7C1, 4 # 4 = 1 << 2</div>
+            <div class="example-explanation">
+                Permite desligar uma flag específica (de 0 a 31) e ler o estado anterior do registrador em uma única operação atômica.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Implementando `csrci` (pseudo-instrução)</h3>
+            <div class="example-code"># A pseudo-instrução 'csrci csr, zimm' é implementada como:
+csrrci x0, csr, zimm</div>
+            <div class="example-explanation">
+                Quando `rd` é `x0`, o valor lido do CSR é descartado, resultando em uma simples limpeza de bits no CSR usando um valor imediato.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O operando `zimm` é um valor de 5 bits (0-31).</li>
+            <li>Se `rd` for `x0`, a instrução apenas limpa os bits no CSR sem retornar o valor antigo.</li>
+            <li>Se `zimm` for 0, a instrução não modifica o CSR e se comporta como uma leitura pura.</li>
+        </ul>
+    </div>
+</body>
+</html>

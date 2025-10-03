@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de Instruções RISC-V (RV32IM)</title>
+    <style>
+        :root {
+            --color-opcode: #f87171; /* red-400 */
+            --color-rd: #60a5fa;     /* blue-400 */
+            --color-rs1: #fbbf24;    /* amber-400 */
+            --color-rs2: #fcd34d;    /* amber-300 */
+            --color-funct3: #a78bfa; /* violet-400 */
+            --color-funct7: #d8b4fe; /* purple-300 */
+            --color-imm: #4ade80;    /* green-400 */
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #334155;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        h1 small {
+            display: block;
+            font-size: 0.6em;
+            color: #64748b;
+            font-weight: normal;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #hex-input {
+            flex-grow: 1;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        #analyze-btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #analyze-btn:hover {
+            background-color: #2563eb;
+        }
+        #output {
+            margin-top: 25px;
+        }
+        #format-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .instruction-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em;
+            table-layout: fixed;
+            margin-bottom: 20px;
+        }
+        .instruction-table th, .instruction-table td {
+            border: 1px solid var(--border-color);
+            text-align: center;
+            padding: 5px 0;
+            height: 30px;
+        }
+        .instruction-table th {
+            font-weight: bold;
+            color: #334155;
+        }
+        .hex-value {
+            font-weight: bold;
+            font-size: 0.95em;
+            color: #1e293b; /* Cor escura para garantir leitura */
+            border-top: 2px solid #94a3b8;
+        }
+
+        /* --- Estilos para a Tabela de Referência --- */
+        .reference-title {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            color: #334155;
+        }
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .reference-table th, .reference-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: center;
+        }
+        .reference-table th {
+            background-color: #f1f5f9;
+        }
+        .reference-table tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .reference-table code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #e2e8f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+        .footnotes {
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #64748b;
+        }
+        .footnotes p {
+            margin: 5px 0;
+        }
+        .footnotes code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.05em;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="text-align: center; margin-bottom: 1.5em;">
+        <a href="https://riscv.org" target="_blank" rel="noopener noreferrer">
+            <img src="https://riscv.org/wp-content/uploads/2020/06/riscv-color.svg" alt="Logo Oficial RISC-V" style="width: 220px;">
+        </a>
+    </div>
+    <h1>Analisador de Instruções em Linguagem de Máquina/Assembly <small>Conjunto RV32IM</small></h1>
+    <div class="input-area">
+        <input type="text" id="hex-input" placeholder="Cole o código hexadecimal de 32 bits aqui (ex: 007302b3)">
+        <button id="analyze-btn">Analisar</button>
+    </div>
+    
+    <div id="output"></div>
+
+    <h2 class="reference-title">Tabela de Referência Rápida (RV32IM)</h2>
+    <p style="text-align: center; font-size: 0.9em; color: #64748b;">Ordenada por Opcode, funct3 e funct7.</p>
+    <table class="reference-table">
+        <thead>
+            <tr>
+                <th>Opcode (Hex)</th>
+                <th>funct3 (Hex)</th>
+                <th>funct7 (Hex)</th>
+                <th>Instrução</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><code>0x03</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/lb.html" target="_blank"><code>lb</code></a></td></tr>
+            <tr><td><code>0x03</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/lh.html" target="_blank"><code>lh</code></a></td></tr>
+            <tr><td><code>0x03</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/lw.html" target="_blank"><code>lw</code></a></td></tr>
+            <tr><td><code>0x03</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/lbu.html" target="_blank"><code>lbu</code></a></td></tr>
+            <tr><td><code>0x03</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/lhu.html" target="_blank"><code>lhu</code></a></td></tr>
+            <tr><td><code>0x0F</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/fence.html" target="_blank"><code>fence</code></a></td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/addi.html" target="_blank"><code>addi</code></a></td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/slli.html" target="_blank"><code>slli</code></a>¹</td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/slti.html" target="_blank"><code>slti</code></a></td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x3</code></td><td>—</td><td><a href="instructions/sltiu.html" target="_blank"><code>sltiu</code></a></td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/xori.html" target="_blank"><code>xori</code></a></td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/srli.html" target="_blank"><code>srli</code></a>¹ / <a href="instructions/srai.html" target="_blank"><code>srai</code></a>¹</td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/ori.html" target="_blank"><code>ori</code></a></td></tr>
+            <tr><td><code>0x13</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/andi.html" target="_blank"><code>andi</code></a></td></tr>
+            <tr><td><code>0x17</code></td><td>—</td><td>—</td><td><a href="instructions/auipc.html" target="_blank"><code>auipc</code></a></td></tr>
+            <tr><td><code>0x23</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/sb.html" target="_blank"><code>sb</code></a></td></tr>
+            <tr><td><code>0x23</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/sh.html" target="_blank"><code>sh</code></a></td></tr>
+            <tr><td><code>0x23</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/sw.html" target="_blank"><code>sw</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x00</code></td><td><a href="instructions/add.html" target="_blank"><code>add</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x01</code></td><td><a href="instructions/mul.html" target="_blank"><code>mul</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x20</code></td><td><a href="instructions/sub.html" target="_blank"><code>sub</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x1</code></td><td><code>0x00</code></td><td><a href="instructions/sll.html" target="_blank"><code>sll</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x1</code></td><td><code>0x01</code></td><td><a href="instructions/mulh.html" target="_blank"><code>mulh</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x2</code></td><td><code>0x00</code></td><td><a href="instructions/slt.html" target="_blank"><code>slt</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x2</code></td><td><code>0x01</code></td><td><a href="instructions/mulhsu.html" target="_blank"><code>mulhsu</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x3</code></td><td><code>0x00</code></td><td><a href="instructions/sltu.html" target="_blank"><code>sltu</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x3</code></td><td><code>0x01</code></td><td><a href="instructions/mulhu.html" target="_blank"><code>mulhu</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x4</code></td><td><code>0x00</code></td><td><a href="instructions/xor.html" target="_blank"><code>xor</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x4</code></td><td><code>0x01</code></td><td><a href="instructions/div.html" target="_blank"><code>div</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x00</code></td><td><a href="instructions/srl.html" target="_blank"><code>srl</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x01</code></td><td><a href="instructions/div.html" target="_blank"><code>divu</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x20</code></td><td><a href="instructions/sra.html" target="_blank"><code>sra</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x6</code></td><td><code>0x00</code></td><td><a href="instructions/or.html" target="_blank"><code>or</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x6</code></td><td><code>0x01</code></td><td><a href="instructions/rem.html" target="_blank"><code>rem</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x7</code></td><td><code>0x00</code></td><td><a href="instructions/and.html" target="_blank"><code>and</code></a></td></tr>
+            <tr><td><code>0x33</code></td><td><code>0x7</code></td><td><code>0x01</code></td><td><a href="instructions/rem.html" target="_blank"><code>remu</code></a></td></tr>
+            <tr><td><code>0x37</code></td><td>—</td><td>—</td><td><a href="instructions/lui.html" target="_blank"><code>lui</code></a></td></tr>
+            <tr><td><code>0x63</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/beq.html" target="_blank"><code>beq</code></a></td></tr>
+            <tr><td><code>0x63</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/bne.html" target="_blank"><code>bne</code></a></td></tr>
+            <tr><td><code>0x63</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/blt.html" target="_blank"><code>blt</code></a></td></tr>
+            <tr><td><code>0x63</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/bge.html" target="_blank"><code>bge</code></a></td></tr>
+            <tr><td><code>0x63</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/bltu.html" target="_blank"><code>bltu</code></a></td></tr>
+            <tr><td><code>0x63</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/bgeu.html" target="_blank"><code>bgeu</code></a></td></tr>
+            <tr><td><code>0x67</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/jalr.html" target="_blank"><code>jalr</code></a></td></tr>
+            <tr><td><code>0x6F</code></td><td>—</td><td>—</td><td><a href="instructions/jal.html" target="_blank"><code>jal</code></a></td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/ecall.html" target="_blank"><code>ecall</code></a> / <a href="instructions/ebreak.html" target="_blank"><code>ebreak</code></a>²</td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/csrrw.html" target="_blank"><code>csrrw</code></a></td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/csrrs.html" target="_blank"><code>csrrs</code></a></td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x3</code></td><td>—</td><td><a href="instructions/csrrc.html" target="_blank"><code>csrrc</code></a></td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/csrrwi.html" target="_blank"><code>csrrwi</code></a></td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/csrrsi.html" target="_blank"><code>csrrsi</code></a></td></tr>
+            <tr><td><code>0x73</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/csrrci.html" target="_blank"><code>csrrci</code></a></td></tr>
+        </tbody>
+    </table>
+    <div class="footnotes">
+        <p><strong>Notas:</strong></p>
+        <p>¹ Para <code>slli</code>, <code>srli</code> e <code>srai</code>, o campo <code>funct7</code> formalmente não existe. A diferenciação entre <code>srli</code> e <code>srai</code> é feita por um bit dentro do campo de imediato da instrução, que está na mesma posição onde estaria o <code>funct7</code>.</p>
+        <p>² <code>ecall</code> e <code>ebreak</code> compartilham o mesmo <code>Opcode</code> e <code>funct3`. Elas são diferenciadas pelo valor no campo de imediato (imm[11:0] é `0x000` para `ecall` e `0x001` para `ebreak`).</p>
+    </div>
+
+</div>
+
+<script>
+    // O JavaScript da ferramenta de análise permanece o mesmo...
+    const fieldColors = {
+        opcode: 'var(--color-opcode)', rd: 'var(--color-rd)', rs1: 'var(--color-rs1)', rs2: 'var(--color-rs2)',
+        funct3: 'var(--color-funct3)', funct7: 'var(--color-funct7)', imm: 'var(--color-imm)'
+    };
+    const iTypeLayout = [
+        { name: 'imm[11:0]', bits: [0, 12], color: fieldColors.imm }, { name: 'rs1', bits: [12, 17], color: fieldColors.rs1 },
+        { name: 'funct3', bits: [17, 20], color: fieldColors.funct3 }, { name: 'rd', bits: [20, 25], color: fieldColors.rd },
+        { name: 'opcode', bits: [25, 32], color: fieldColors.opcode }
+    ];
+    const instructionFormats = {
+        '0110011': { name: 'R-Type', fields: [{ name: 'funct7', bits: [0, 7], color: fieldColors.funct7 },{ name: 'rs2', bits: [7, 12], color: fieldColors.rs2 },{ name: 'rs1', bits: [12, 17], color: fieldColors.rs1 },{ name: 'funct3', bits: [17, 20], color: fieldColors.funct3 },{ name: 'rd', bits: [20, 25], color: fieldColors.rd },{ name: 'opcode', bits: [25, 32], color: fieldColors.opcode }] },
+        '0010011': { name: 'I-Type (Op-Imm)', fields: iTypeLayout },
+        '0000011': { name: 'I-Type (Load)', fields: iTypeLayout },
+        '1100111': { name: 'I-Type (JALR)', fields: iTypeLayout },
+        '0001111': { name: 'I-Type (Fence)', fields: iTypeLayout },
+        '1110011': { name: 'I-Type (System)', fields: iTypeLayout },
+        '0100011': { name: 'S-Type', fields: [{ name: 'imm[11:5]', bits: [0, 7], color: fieldColors.imm },{ name: 'rs2', bits: [7, 12], color: fieldColors.rs2 },{ name: 'rs1', bits: [12, 17], color: fieldColors.rs1 },{ name: 'funct3', bits: [17, 20], color: fieldColors.funct3 },{ name: 'imm[4:0]', bits: [20, 25], color: fieldColors.imm },{ name: 'opcode', bits: [25, 32], color: fieldColors.opcode }] },
+        '1100011': { name: 'B-Type', fields: [{ name: 'imm[12|10:5]', bits: [0, 7], color: fieldColors.imm },{ name: 'rs2', bits: [7, 12], color: fieldColors.rs2 },{ name: 'rs1', bits: [12, 17], color: fieldColors.rs1 },{ name: 'funct3', bits: [17, 20], color: fieldColors.funct3 },{ name: 'imm[4:1|11]', bits: [20, 25], color: fieldColors.imm },{ name: 'opcode', bits: [25, 32], color: fieldColors.opcode }] },
+        '0110111': { name: 'U-Type', fields: [{ name: 'imm[31:12]', bits: [0, 20], color: fieldColors.imm },{ name: 'rd', bits: [20, 25], color: fieldColors.rd },{ name: 'opcode', bits: [25, 32], color: fieldColors.opcode }] },
+        '0010111': { name: 'U-Type', fields: [{ name: 'imm[31:12]', bits: [0, 20], color: fieldColors.imm },{ name: 'rd', bits: [20, 25], color: fieldColors.rd },{ name: 'opcode', bits: [25, 32], color: fieldColors.opcode }] },
+        '1101111': { name: 'J-Type', fields: [{ name: 'imm[20|10:1|11|19:12]', bits: [0, 20], color: fieldColors.imm },{ name: 'rd', bits: [20, 25], color: fieldColors.rd },{ name: 'opcode', bits: [25, 32], color: fieldColors.opcode }] }
+    };
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const hexInput = document.getElementById('hex-input');
+    const outputDiv = document.getElementById('output');
+    function analyzeInstruction() {
+        let hex = hexInput.value.trim();
+        if (hex.startsWith('0x')) { hex = hex.substring(2); }
+        if (hex.length !== 8 || !/^[0-9a-fA-F]+$/.test(hex)) {
+            outputDiv.innerHTML = `<p style="color: red; text-align: center;">Por favor, insira um código hexadecimal válido de 32 bits (8 caracteres).</p>`;
+            return;
+        }
+        const binary = BigInt('0x' + hex).toString(2).padStart(32, '0');
+        const opcode = binary.substring(25, 32);
+        const format = instructionFormats[opcode];
+        if (!format) {
+            outputDiv.innerHTML = `<p style="color: orange; text-align: center;">Opcode (<code>${opcode}</code>) não reconhecido. Pode ser de uma extensão não implementada (ex: Atômica 'A' ou Ponto Flutuante 'F').</p>`;
+            return;
+        }
+        renderOutput(binary, format);
+    }
+    function renderOutput(binary, format) {
+        let tableHeader = `<thead><tr>`;
+        format.fields.forEach(field => {
+            const colspan = field.bits[1] - field.bits[0];
+            tableHeader += `<th colspan="${colspan}" style="background-color: ${field.color};">${field.name}</th>`;
+        });
+        tableHeader += `</tr></thead>`;
+        let tableBody = `<tbody><tr>`;
+        for (let i = 0; i < 32; i++) {
+            const bit = binary[i];
+            const field = format.fields.find(f => i >= f.bits[0] && i < f.bits[1]);
+            tableBody += `<td style="background-color: ${field ? field.color : ''}; font-weight: bold; color: #1e293b;">${bit}</td>`;
+        }
+        tableBody += `</tr>`;
+        tableBody += `<tr>`;
+        format.fields.forEach(field => {
+            const colspan = field.bits[1] - field.bits[0];
+            const binarySlice = binary.substring(field.bits[0], field.bits[1]);
+            const hexValue = parseInt(binarySlice, 2).toString(16).toUpperCase();
+            tableBody += `<td colspan="${colspan}" class="hex-value" style="background-color: ${field.color};">0x${hexValue}</td>`;
+        });
+        tableBody += `</tr></tbody>`;
+        outputDiv.innerHTML = `
+            <h2 id="format-name">Formato Identificado: ${format.name}</h2>
+            <table class="instruction-table">
+                ${tableHeader}
+                ${tableBody}
+            </table>
+        `;
+    }
+    analyzeBtn.addEventListener('click', analyzeInstruction);
+    hexInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') { analyzeInstruction(); }
+    });
+</script>
+
+</body>
+</html>

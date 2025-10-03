@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução EBREAK - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>EBREAK - Breakpoint de Ambiente</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">ebreak</div>
+
+        <h2>Descrição</h2>
+        <p>Gera uma exceção de "breakpoint". É usada para transferir o controle do programa para um ambiente de depuração (debugger). Se nenhum debugger estiver presente, o comportamento é o de uma exceção normal, transferindo o controle para o handler de exceções do sistema.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type (System)</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x0</code></div>
+            <div class="info-item"><strong>imm[11:0]:</strong> <code>0x001</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">RaiseException(Breakpoint)</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Ponto de parada para depuração</h3>
+            <div class="example-code">    li a0, 5
+    li a1, 10
+    add a0, a0, a1
+
+    ebreak  # Pausa a execução aqui para inspecionar os registradores
+
+    sub a0, a0, 5</div>
+            <div class="example-explanation">
+                Ao executar este código em um depurador (como GDB), a execução irá parar na instrução `ebreak`, permitindo que o programador inspecione o valor de `a0` (que deve ser 15) antes de continuar.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Compartilha o mesmo opcode que `ecall`, mas é diferenciada pelo valor `1` no campo de imediato.</li>
+            <li>Se executada fora de um ambiente de depuração, gera uma exceção com `mcause` igual a 3 (breakpoint).</li>
+            <li>É a maneira padrão de inserir pontos de parada no código-fonte para depuração de baixo nível.</li>
+        </ul>
+    </div>
+</body>
+</html>

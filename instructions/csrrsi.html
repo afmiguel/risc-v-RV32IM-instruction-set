@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRRSI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRRSI - Leitura e Set de Bits em CSR com Imediato</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrrsi rd, csr, zimm</div>
+
+        <h2>Descrição</h2>
+        <p>Executa uma operação atômica de leitura-modificação-escrita. Lê o valor do CSR <code>csr</code> e o armazena em <code>rd</code>. O valor antigo do CSR é então atualizado fazendo uma operação OR bit a bit com o valor imediato de 5 bits estendido com zero (<code>zimm</code>). Isso efetivamente "seta" os bits no CSR especificados por <code>zimm</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type (System)</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x6</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">temp = csr
+csr = temp | zero_extend(zimm)
+rd = temp</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Habilitar uma flag de status</h3>
+            <div class="example-code"># Habilitar o bit 4 de um CSR de controle e salvar o valor antigo
+csrrsi t0, 0x7C0, 16 # 16 = 1 << 4</div>
+            <div class="example-explanation">
+                Permite ligar uma flag específica (de 0 a 31) e ler o estado anterior do registrador em uma única operação atômica.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Ler um CSR (se zimm=0)</h3>
+            <div class="example-code"># Ler o CSR sem modificá-lo
+csrrsi rd, csr, 0</div>
+            <div class="example-explanation">
+                Se o imediato `zimm` for 0, a operação OR não tem efeito, e a instrução funciona como uma leitura pura do CSR, similar a `csrr`.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O operando `zimm` é um valor de 5 bits (0-31).</li>
+            <li>Se `rd` for `x0`, a instrução apenas seta os bits no CSR sem retornar o valor antigo. Isso forma a base da pseudo-instrução `csrsi`.</li>
+            <li>Se `zimm` for 0, a instrução não modifica o CSR e se comporta como uma leitura.</li>
+        </ul>
+    </div>
+</body>
+</html>

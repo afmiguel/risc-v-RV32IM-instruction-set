@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução MULH - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>MULH - Multiplicar, Parte Alta (Multiply High, Signed)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">mulh rd, rs1, rs2</div>
+
+        <h2>Descrição</h2>
+        <p>Multiplica os valores nos registradores <code>rs1</code> e <code>rs2</code>, tratando-os como números com sinal de 32 bits. O resultado é um valor de 64 bits, e os 32 bits mais significativos (a parte alta) são armazenados no registrador de destino <code>rd</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> R-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x1</code></div>
+            <div class="info-item"><strong>funct7:</strong> <code>0x01</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = ((signed)rs1 * (signed)rs2) >> 32</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Obter resultado completo de 64 bits</h3>
+            <div class="example-code"># Multiplicar 0x80000000 (-2147483648) por 2
+li t0, 0x80000000
+li t1, 2
+
+mulh t2, t0, t1  # t2 = 0xFFFFFFFF (parte alta do resultado de 64 bits)
+mul t3, t0, t1   # t3 = 0x00000000 (parte baixa do resultado)
+# O resultado de 64 bits é {t2, t3} = 0xFFFFFFFF00000000</div>
+            <div class="example-explanation">
+                Para obter o resultado completo de 64 bits de uma multiplicação, você deve usar `mulh` para a parte alta e `mul` para a parte baixa. Isso é essencial para aritmética de 64 bits em um processador de 32 bits.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Faz parte da extensão "M" do RISC-V.</li>
+            <li>É usada para obter os 32 bits superiores de uma multiplicação de 32x32 bits com sinal.</li>
+            <li>Para obter os 32 bits inferiores, use a instrução <code>mul</code>.</li>
+            <li>Para operandos sem sinal, use <code>mulhu</code>. Para operandos mistos, use <code>mulhsu</code>.</li>
+        </ul>
+    </div>
+</body>
+</html>

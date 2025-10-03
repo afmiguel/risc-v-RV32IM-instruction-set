@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRRWI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRRWI - Leitura-Escrita em CSR com Imediato</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrrwi rd, csr, zimm</div>
+
+        <h2>Descrição</h2>
+        <p>Executa uma operação atômica de leitura-modificação-escrita. Lê o valor do CSR <code>csr</code> e o armazena em <code>rd</code>. Em seguida, um valor imediato de 5 bits estendido com zero (<code>zimm</code>) é escrito no CSR.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type (System)</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x5</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">temp = csr
+csr = zero_extend(zimm)
+rd = temp</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Trocar o nível de privilégio e salvar o antigo</h3>
+            <div class="example-code"># Suponha que queremos mudar para um modo de hardware específico (valor 2)
+csrrwi t0, 0x7C0, 2 # 0x7C0 é um CSR customizado. t0 = valor antigo, CSR = 2</div>
+            <div class="example-explanation">
+                A instrução permite escrever um valor pequeno e constante em um CSR enquanto salva atomicamente o valor anterior, útil para trocas de estado.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Escrever um valor imediato (pseudo-instrução `csrwi`)</h3>
+            <div class="example-code"># A pseudo-instrução 'csrwi csr, zimm' é implementada como:
+csrrwi x0, csr, zimm</div>
+            <div class="example-explanation">
+                Quando `rd` é `x0`, o valor lido do CSR é descartado, resultando em uma simples escrita de um valor imediato no CSR.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>O operando `zimm` é um valor de 5 bits (0-31) estendido com zero.</li>
+            <li>Se `rd` for `x0`, a instrução não lê o valor do CSR, apenas o escreve.</li>
+            <li>É útil para modificar CSRs com valores pequenos e constantes sem precisar usar um registrador para guardar o imediato.</li>
+        </ul>
+    </div>
+</body>
+</html>

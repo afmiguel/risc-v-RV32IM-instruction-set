@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução CSRRS - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>CSRRS - Leitura e Set Atômico de Bits em CSR</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">csrrs rd, csr, rs1</div>
+
+        <h2>Descrição</h2>
+        <p>Executa uma operação atômica de leitura-modificação-escrita. Lê o valor do registrador de controle e status (CSR) <code>csr</code>, o estende com zeros e o armazena em <code>rd</code>. O valor antigo do CSR é então atualizado fazendo uma operação OR bit a bit com o valor em <code>rs1</code>. Isso efetivamente "seta" (liga) os bits no CSR que estão ligados em <code>rs1</code>.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> I-type (System)</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>1110011</code></div>
+            <div class="info-item"><strong>funct3:</strong> <code>0x2</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">temp = csr
+csr = temp | rs1
+rd = temp</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Habilitar interrupções e ler estado anterior</h3>
+            <div class="example-code"># Habilitar o bit de interrupção de timer (MTIE, bit 7) no registrador 'mie'
+li t0, 1 << 7
+csrrs t1, mie, t0  # t1 = valor antigo de mie, mie agora tem o bit 7 setado</div>
+            <div class="example-explanation">
+                Esta operação atomicamente habilita a interrupção do timer e, ao mesmo tempo, salva o estado anterior do registrador `mie` em `t1`, o que pode ser útil para restaurá-lo mais tarde.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Ler um CSR (pseudo-instrução `csrr`)</h3>
+            <div class="example-code"># A pseudo-instrução 'csrr rd, csr' é implementada como:
+csrrs rd, csr, x0</div>
+            <div class="example-explanation">
+                Quando `rs1` é o registrador `x0` (que é sempre zero), a operação OR com zero não altera o CSR. O resultado é que o valor do CSR é apenas lido para `rd` sem ser modificado.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>Se `rs1` for `x0`, a instrução não escreve no CSR e atua como uma leitura pura. Isso forma a base da pseudo-instrução `csrr`.</li>
+            <li>Se `rd` for `x0`, o valor lido do CSR é descartado, e a instrução atua como uma escrita "set-only". Isso forma a base da pseudo-instrução `csrs`.</li>
+            <li>A operação é atômica, garantindo que nenhuma outra interrupção ou trap ocorra entre a leitura e a escrita.</li>
+        </ul>
+    </div>
+</body>
+</html>
