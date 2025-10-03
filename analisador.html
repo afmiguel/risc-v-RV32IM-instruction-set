@@ -17,25 +17,45 @@
             --text-color: #1e293b;
             --border-color: #cbd5e1;
         }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Impede a rolagem do corpo da página */
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
             box-sizing: border-box;
         }
         .container {
             width: 100%;
             max-width: 1000px;
+            height: calc(100vh - 40px); /* Altura total da viewport menos o padding do body */
+            margin: 0 auto;
             background-color: white;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        .analisador-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+        .analisador-top {
+            flex-shrink: 0;
+        }
+        .analisador-bottom {
+            flex-grow: 1;
+            overflow-y: auto; /* Apenas este painel terá rolagem */
+            padding-top: 20px;
         }
         h1 {
             text-align: center;
@@ -106,14 +126,12 @@
         .hex-value {
             font-weight: bold;
             font-size: 0.95em;
-            color: #1e293b; /* Cor escura para garantir leitura */
+            color: #1e293b;
             border-top: 2px solid #94a3b8;
         }
-
-        /* --- Estilos para a Tabela de Referência --- */
         .reference-title {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 20px;
             padding-top: 20px;
             border-top: 2px solid var(--border-color);
             color: #334155;
@@ -142,6 +160,15 @@
             border-radius: 4px;
             font-size: 1.1em;
         }
+        .reference-table a {
+            color: #1e293b;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .reference-table a:hover {
+            color: #2563eb;
+            text-decoration: none;
+        }
         .footnotes {
             margin-top: 15px;
             font-size: 0.85em;
@@ -154,97 +181,99 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 1.05em;
         }
-
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="text-align: center; margin-bottom: 1.5em;">
-        <a href="https://riscv.org" target="_blank" rel="noopener noreferrer">
-            <img src="https://riscv.org/wp-content/uploads/2020/06/riscv-color.svg" alt="Logo Oficial RISC-V" style="width: 220px;">
-        </a>
+    <div class="analisador-wrapper">
+        <div class="analisador-top">
+            <div style="text-align: center; margin-bottom: 1.5em;">
+                <a href="https://riscv.org" target="_blank" rel="noopener noreferrer">
+                    <img src="https://riscv.org/wp-content/uploads/2020/06/riscv-color.svg" alt="Logo Oficial RISC-V" style="width: 220px;">
+                </a>
+            </div>
+            <h1>Analisador de Instruções em Linguagem de Máquina/Assembly <small>Conjunto RV32IM</small></h1>
+            <div class="input-area">
+                <input type="text" id="hex-input" placeholder="Cole o código hexadecimal de 32 bits aqui (ex: 007302b3)">
+                <button id="analyze-btn">Analisar</button>
+            </div>
+            <div id="output"></div>
+        </div>
+        <div class="analisador-bottom">
+            <h2 class="reference-title">Tabela de Referência Rápida (RV32IM)</h2>
+            <p style="text-align: center; font-size: 0.9em; color: #64748b;">Ordenada por Opcode, funct3 e funct7.</p>
+            <table class="reference-table">
+                <thead>
+                    <tr>
+                        <th>Opcode (Hex)</th>
+                        <th>funct3 (Hex)</th>
+                        <th>funct7 (Hex)</th>
+                        <th>Instrução</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>0x03</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/lb.html" target="_blank"><code>lb</code></a></td></tr>
+                    <tr><td><code>0x03</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/lh.html" target="_blank"><code>lh</code></a></td></tr>
+                    <tr><td><code>0x03</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/lw.html" target="_blank"><code>lw</code></a></td></tr>
+                    <tr><td><code>0x03</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/lbu.html" target="_blank"><code>lbu</code></a></td></tr>
+                    <tr><td><code>0x03</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/lhu.html" target="_blank"><code>lhu</code></a></td></tr>
+                    <tr><td><code>0x0F</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/fence.html" target="_blank"><code>fence</code></a></td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/addi.html" target="_blank"><code>addi</code></a></td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/slli.html" target="_blank"><code>slli</code></a>¹</td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/slti.html" target="_blank"><code>slti</code></a></td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x3</code></td><td>—</td><td><a href="instructions/sltiu.html" target="_blank"><code>sltiu</code></a></td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/xori.html" target="_blank"><code>xori</code></a></td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/srli.html" target="_blank"><code>srli</code></a>¹ / <a href="instructions/srai.html" target="_blank"><code>srai</code></a>¹</td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/ori.html" target="_blank"><code>ori</code></a></td></tr>
+                    <tr><td><code>0x13</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/andi.html" target="_blank"><code>andi</code></a></td></tr>
+                    <tr><td><code>0x17</code></td><td>—</td><td>—</td><td><a href="instructions/auipc.html" target="_blank"><code>auipc</code></a></td></tr>
+                    <tr><td><code>0x23</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/sb.html" target="_blank"><code>sb</code></a></td></tr>
+                    <tr><td><code>0x23</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/sh.html" target="_blank"><code>sh</code></a></td></tr>
+                    <tr><td><code>0x23</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/sw.html" target="_blank"><code>sw</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x00</code></td><td><a href="instructions/add.html" target="_blank"><code>add</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x01</code></td><td><a href="instructions/mul.html" target="_blank"><code>mul</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x20</code></td><td><a href="instructions/sub.html" target="_blank"><code>sub</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x1</code></td><td><code>0x00</code></td><td><a href="instructions/sll.html" target="_blank"><code>sll</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x1</code></td><td><code>0x01</code></td><td><a href="instructions/mulh.html" target="_blank"><code>mulh</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x2</code></td><td><code>0x00</code></td><td><a href="instructions/slt.html" target="_blank"><code>slt</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x2</code></td><td><code>0x01</code></td><td><a href="instructions/mulhsu.html" target="_blank"><code>mulhsu</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x3</code></td><td><code>0x00</code></td><td><a href="instructions/sltu.html" target="_blank"><code>sltu</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x3</code></td><td><code>0x01</code></td><td><a href="instructions/mulhu.html" target="_blank"><code>mulhu</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x4</code></td><td><code>0x00</code></td><td><a href="instructions/xor.html" target="_blank"><code>xor</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x4</code></td><td><code>0x01</code></td><td><a href="instructions/div.html" target="_blank"><code>div</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x00</code></td><td><a href="instructions/srl.html" target="_blank"><code>srl</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x01</code></td><td><a href="instructions/div.html" target="_blank"><code>divu</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x20</code></td><td><a href="instructions/sra.html" target="_blank"><code>sra</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x6</code></td><td><code>0x00</code></td><td><a href="instructions/or.html" target="_blank"><code>or</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x6</code></td><td><code>0x01</code></td><td><a href="instructions/rem.html" target="_blank"><code>rem</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x7</code></td><td><code>0x00</code></td><td><a href="instructions/and.html" target="_blank"><code>and</code></a></td></tr>
+                    <tr><td><code>0x33</code></td><td><code>0x7</code></td><td><code>0x01</code></td><td><a href="instructions/rem.html" target="_blank"><code>remu</code></a></td></tr>
+                    <tr><td><code>0x37</code></td><td>—</td><td>—</td><td><a href="instructions/lui.html" target="_blank"><code>lui</code></a></td></tr>
+                    <tr><td><code>0x63</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/beq.html" target="_blank"><code>beq</code></a></td></tr>
+                    <tr><td><code>0x63</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/bne.html" target="_blank"><code>bne</code></a></td></tr>
+                    <tr><td><code>0x63</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/blt.html" target="_blank"><code>blt</code></a></td></tr>
+                    <tr><td><code>0x63</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/bge.html" target="_blank"><code>bge</code></a></td></tr>
+                    <tr><td><code>0x63</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/bltu.html" target="_blank"><code>bltu</code></a></td></tr>
+                    <tr><td><code>0x63</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/bgeu.html" target="_blank"><code>bgeu</code></a></td></tr>
+                    <tr><td><code>0x67</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/jalr.html" target="_blank"><code>jalr</code></a></td></tr>
+                    <tr><td><code>0x6F</code></td><td>—</td><td>—</td><td><a href="instructions/jal.html" target="_blank"><code>jal</code></a></td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/ecall.html" target="_blank"><code>ecall</code></a> / <a href="instructions/ebreak.html" target="_blank"><code>ebreak</code></a>²</td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/csrrw.html" target="_blank"><code>csrrw</code></a></td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/csrrs.html" target="_blank"><code>csrrs</code></a></td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x3</code></td><td>—</td><td><a href="instructions/csrrc.html" target="_blank"><code>csrrc</code></a></td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/csrrwi.html" target="_blank"><code>csrrwi</code></a></td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/csrrsi.html" target="_blank"><code>csrrsi</code></a></td></tr>
+                    <tr><td><code>0x73</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/csrrci.html" target="_blank"><code>csrrci</code></a></td></tr>
+                </tbody>
+            </table>
+            <div class="footnotes">
+                <p><strong>Notas:</strong></p>
+                <p>¹ Para <code>slli</code>, <code>srli</code> e <code>srai</code>, o campo <code>funct7</code> formalmente não existe. A diferenciação entre <code>srli</code> e <code>srai</code> é feita por um bit dentro do campo de imediato da instrução, que está na mesma posição onde estaria o <code>funct7</code>.</p>
+                <p>² <code>ecall</code> e <code>ebreak</code> compartilham o mesmo <code>Opcode</code> e <code>funct3`. Elas são diferenciadas pelo valor no campo de imediato (imm[11:0] é `0x000` para `ecall` e `0x001` para `ebreak`).</p>
+            </div>
+        </div>
     </div>
-    <h1>Analisador de Instruções em Linguagem de Máquina/Assembly <small>Conjunto RV32IM</small></h1>
-    <div class="input-area">
-        <input type="text" id="hex-input" placeholder="Cole o código hexadecimal de 32 bits aqui (ex: 007302b3)">
-        <button id="analyze-btn">Analisar</button>
-    </div>
-    
-    <div id="output"></div>
-
-    <h2 class="reference-title">Tabela de Referência Rápida (RV32IM)</h2>
-    <p style="text-align: center; font-size: 0.9em; color: #64748b;">Ordenada por Opcode, funct3 e funct7.</p>
-    <table class="reference-table">
-        <thead>
-            <tr>
-                <th>Opcode (Hex)</th>
-                <th>funct3 (Hex)</th>
-                <th>funct7 (Hex)</th>
-                <th>Instrução</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td><code>0x03</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/lb.html" target="_blank"><code>lb</code></a></td></tr>
-            <tr><td><code>0x03</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/lh.html" target="_blank"><code>lh</code></a></td></tr>
-            <tr><td><code>0x03</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/lw.html" target="_blank"><code>lw</code></a></td></tr>
-            <tr><td><code>0x03</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/lbu.html" target="_blank"><code>lbu</code></a></td></tr>
-            <tr><td><code>0x03</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/lhu.html" target="_blank"><code>lhu</code></a></td></tr>
-            <tr><td><code>0x0F</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/fence.html" target="_blank"><code>fence</code></a></td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/addi.html" target="_blank"><code>addi</code></a></td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/slli.html" target="_blank"><code>slli</code></a>¹</td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/slti.html" target="_blank"><code>slti</code></a></td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x3</code></td><td>—</td><td><a href="instructions/sltiu.html" target="_blank"><code>sltiu</code></a></td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/xori.html" target="_blank"><code>xori</code></a></td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/srli.html" target="_blank"><code>srli</code></a>¹ / <a href="instructions/srai.html" target="_blank"><code>srai</code></a>¹</td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/ori.html" target="_blank"><code>ori</code></a></td></tr>
-            <tr><td><code>0x13</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/andi.html" target="_blank"><code>andi</code></a></td></tr>
-            <tr><td><code>0x17</code></td><td>—</td><td>—</td><td><a href="instructions/auipc.html" target="_blank"><code>auipc</code></a></td></tr>
-            <tr><td><code>0x23</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/sb.html" target="_blank"><code>sb</code></a></td></tr>
-            <tr><td><code>0x23</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/sh.html" target="_blank"><code>sh</code></a></td></tr>
-            <tr><td><code>0x23</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/sw.html" target="_blank"><code>sw</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x00</code></td><td><a href="instructions/add.html" target="_blank"><code>add</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x01</code></td><td><a href="instructions/mul.html" target="_blank"><code>mul</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x0</code></td><td><code>0x20</code></td><td><a href="instructions/sub.html" target="_blank"><code>sub</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x1</code></td><td><code>0x00</code></td><td><a href="instructions/sll.html" target="_blank"><code>sll</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x1</code></td><td><code>0x01</code></td><td><a href="instructions/mulh.html" target="_blank"><code>mulh</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x2</code></td><td><code>0x00</code></td><td><a href="instructions/slt.html" target="_blank"><code>slt</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x2</code></td><td><code>0x01</code></td><td><a href="instructions/mulhsu.html" target="_blank"><code>mulhsu</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x3</code></td><td><code>0x00</code></td><td><a href="instructions/sltu.html" target="_blank"><code>sltu</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x3</code></td><td><code>0x01</code></td><td><a href="instructions/mulhu.html" target="_blank"><code>mulhu</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x4</code></td><td><code>0x00</code></td><td><a href="instructions/xor.html" target="_blank"><code>xor</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x4</code></td><td><code>0x01</code></td><td><a href="instructions/div.html" target="_blank"><code>div</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x00</code></td><td><a href="instructions/srl.html" target="_blank"><code>srl</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x01</code></td><td><a href="instructions/div.html" target="_blank"><code>divu</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x5</code></td><td><code>0x20</code></td><td><a href="instructions/sra.html" target="_blank"><code>sra</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x6</code></td><td><code>0x00</code></td><td><a href="instructions/or.html" target="_blank"><code>or</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x6</code></td><td><code>0x01</code></td><td><a href="instructions/rem.html" target="_blank"><code>rem</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x7</code></td><td><code>0x00</code></td><td><a href="instructions/and.html" target="_blank"><code>and</code></a></td></tr>
-            <tr><td><code>0x33</code></td><td><code>0x7</code></td><td><code>0x01</code></td><td><a href="instructions/rem.html" target="_blank"><code>remu</code></a></td></tr>
-            <tr><td><code>0x37</code></td><td>—</td><td>—</td><td><a href="instructions/lui.html" target="_blank"><code>lui</code></a></td></tr>
-            <tr><td><code>0x63</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/beq.html" target="_blank"><code>beq</code></a></td></tr>
-            <tr><td><code>0x63</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/bne.html" target="_blank"><code>bne</code></a></td></tr>
-            <tr><td><code>0x63</code></td><td><code>0x4</code></td><td>—</td><td><a href="instructions/blt.html" target="_blank"><code>blt</code></a></td></tr>
-            <tr><td><code>0x63</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/bge.html" target="_blank"><code>bge</code></a></td></tr>
-            <tr><td><code>0x63</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/bltu.html" target="_blank"><code>bltu</code></a></td></tr>
-            <tr><td><code>0x63</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/bgeu.html" target="_blank"><code>bgeu</code></a></td></tr>
-            <tr><td><code>0x67</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/jalr.html" target="_blank"><code>jalr</code></a></td></tr>
-            <tr><td><code>0x6F</code></td><td>—</td><td>—</td><td><a href="instructions/jal.html" target="_blank"><code>jal</code></a></td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x0</code></td><td>—</td><td><a href="instructions/ecall.html" target="_blank"><code>ecall</code></a> / <a href="instructions/ebreak.html" target="_blank"><code>ebreak</code></a>²</td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x1</code></td><td>—</td><td><a href="instructions/csrrw.html" target="_blank"><code>csrrw</code></a></td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x2</code></td><td>—</td><td><a href="instructions/csrrs.html" target="_blank"><code>csrrs</code></a></td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x3</code></td><td>—</td><td><a href="instructions/csrrc.html" target="_blank"><code>csrrc</code></a></td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x5</code></td><td>—</td><td><a href="instructions/csrrwi.html" target="_blank"><code>csrrwi</code></a></td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x6</code></td><td>—</td><td><a href="instructions/csrrsi.html" target="_blank"><code>csrrsi</code></a></td></tr>
-            <tr><td><code>0x73</code></td><td><code>0x7</code></td><td>—</td><td><a href="instructions/csrrci.html" target="_blank"><code>csrrci</code></a></td></tr>
-        </tbody>
-    </table>
-    <div class="footnotes">
-        <p><strong>Notas:</strong></p>
-        <p>¹ Para <code>slli</code>, <code>srli</code> e <code>srai</code>, o campo <code>funct7</code> formalmente não existe. A diferenciação entre <code>srli</code> e <code>srai</code> é feita por um bit dentro do campo de imediato da instrução, que está na mesma posição onde estaria o <code>funct7</code>.</p>
-        <p>² <code>ecall</code> e <code>ebreak</code> compartilham o mesmo <code>Opcode</code> e <code>funct3`. Elas são diferenciadas pelo valor no campo de imediato (imm[11:0] é `0x000` para `ecall` e `0x001` para `ebreak`).</p>
-    </div>
-
 </div>
 
 <script>
