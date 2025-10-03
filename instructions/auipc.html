@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução AUIPC - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>AUIPC - Adicionar Imediato Superior ao PC (Add Upper Immediate to PC)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">auipc rd, imediato</div>
+
+        <h2>Descrição</h2>
+        <p>Soma um valor <code>imediato</code> de 20 bits (deslocado 12 bits para a esquerda) ao contador de programa (PC) atual e armazena o resultado no registrador de destino <code>rd</code>. É usada para gerar endereços relativos à posição atual do código.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> U-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0010111</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = PC + (imediato << 12)</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Implementação da pseudo-instrução `la`</h3>
+            <div class="example-code"># Carregar o endereço do rótulo 'minha_string'
+# A pseudo-instrução 'la' faz isso:
+# la t0, minha_string
+
+# Implementação real com AUIPC e ADDI:
+# Suponha que minha_string está a 0x1040 bytes de distância
+auipc t0, 1          # t0 = PC + 0x1000
+addi t0, t0, 0x40    # t0 = (PC + 0x1000) + 0x40 = endereço de minha_string</div>
+            <div class="example-explanation">
+                `auipc` calcula um endereço base próximo à instrução atual. Em seguida, `addi` (ou `lw`, `sw`, etc.) usa seu imediato de 12 bits para fornecer o deslocamento final para o dado ou função desejada. Esta é a base do código independente de posição (PIC).
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Chamada de função de longo alcance (`call`)</h3>
+            <div class="example-code"># A pseudo-instrução 'call' para funções distantes usa auipc
+# call funcao_distante
+
+# Implementação real:
+auipc ra, offset_superior # ra = PC + offset_superior
+jalr ra, offset_inferior(ra) # Salta para (ra + offset_inferior) e guarda PC+4 em ra</div>
+            <div class="example-explanation">
+                Para saltar para endereços que estão fora do alcance da instrução `jal`, `auipc` é usado para colocar um endereço base de 32 bits em um registrador, que é então usado por `jalr` para completar o salto.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É a instrução principal para se escrever código independente de posição (Position-Independent Code - PIC), que pode ser carregado e executado em qualquer lugar na memória.</li>
+            <li>O resultado em `rd` é um endereço absoluto, mas é calculado de forma relativa ao PC.</li>
+            <li>Diferente de `lui`, que cria um valor absoluto, `auipc` cria um valor relativo à instrução atual.</li>
+        </ul>
+    </div>
+</body>
+</html>

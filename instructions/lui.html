@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrução LUI - RV32IM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Voltar para Referência</a>
+
+        <h1>LUI - Carregar Imediato Superior (Load Upper Immediate)</h1>
+
+        <h2>Sintaxe</h2>
+        <div class="syntax-box">lui rd, imediato</div>
+
+        <h2>Descrição</h2>
+        <p>Carrega o valor <code>imediato</code> de 20 bits nos 20 bits mais significativos (superiores) do registrador de destino <code>rd</code>. Os 12 bits inferiores de <code>rd</code> são preenchidos com zeros.</p>
+
+        <h2>Formato e Codificação</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>Formato:</strong> U-type</div>
+            <div class="info-item"><strong>Opcode:</strong> <code>0110111</code></div>
+        </div>
+
+        <h2>Operação</h2>
+        <div class="syntax-box">rd = imediato << 12</div>
+
+        <h2>Exemplos de Uso</h2>
+
+        <div class="example-section">
+            <h3>Exemplo 1: Construir uma constante de 32 bits</h3>
+            <div class="example-code"># Carregar o valor 0x12345678 em t0
+# A pseudo-instrução 'li' faz isso automaticamente:
+# li t0, 0x12345678
+
+# Implementação real com LUI e ADDI:
+lui t0, 0x12345      # t0 = 0x12345000
+addi t0, t0, 0x678   # t0 = 0x12345000 + 0x678 = 0x12345678</div>
+            <div class="example-explanation">
+                `lui` é a primeira etapa para carregar qualquer constante de 32 bits que não caiba em um imediato de 12 bits. Ela posiciona os 20 bits superiores, e `addi` (ou `ori`/`xori`) preenche os 12 bits inferiores.
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h3>Exemplo 2: Obter o endereço base de uma seção de memória</h3>
+            <div class="example-code"># Acessar um endereço absoluto, como um periférico em 0x10010000
+lui t0, 0x10010      # t0 = 0x10010000
+sw t1, 0(t0)         # Escreve o valor de t1 no endereço 0x10010000</div>
+            <div class="example-explanation">
+                `lui` é usado para gerar ponteiros para endereços de memória absolutos, que são conhecidos em tempo de compilação.
+            </div>
+        </div>
+
+        <h2>Observações</h2>
+        <ul class="notes-list">
+            <li>É uma das poucas instruções que pode escrever nos bits superiores de um registrador diretamente.</li>
+            <li>O imediato de 20 bits é tratado como um número sem sinal.</li>
+            <li>É fundamental para a implementação da pseudo-instrução <code>li</code> (Load Immediate).</li>
+            <li>Diferente de `auipc`, o valor carregado é absoluto e não depende da posição atual do código (PC).</li>
+        </ul>
+    </div>
+</body>
+</html>
