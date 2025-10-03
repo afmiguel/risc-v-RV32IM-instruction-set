@@ -662,10 +662,6 @@
                     <td class="inst-col"><code onclick="window.location.href='instructions/auipc.html'">auipc rd, imm</code></td>
                     <td>Soma um imediato de 20 bits (deslocado) ao PC e armazena em <span class="param">rd</span>. Usado para código independente de posição.</td>
                 </tr>
-                <tr class="category-load">
-                    <td class="inst-col"><i><code>L{W|H|HU|B|BU} rd, lab</code></i></td>
-                    <td>Para cada uma das instruções de máquina lw, lh, lhu, lb e lbu existe uma pseudo-instrução que executa a mesma operação, mas o endereço de memória é calculado com base em um rótulo (<span class="param">lab</span>).</td>
-                </tr>
 
                 <!-- Categoria: Movimentação -->
                 <tr class="category-header category-header-move">
@@ -691,10 +687,6 @@
                 <tr class="category-store">
                     <td class="inst-col"><code onclick="window.location.href='instructions/sw.html'">sw rs1, imm(rs2)</code></td>
                     <td>Armazena o valor de 32 bits no registrador <span class="param">rs1</span> na memória. O endereço de memória é calculado adicionando o valor imediato <span class="param">imm</span> ao valor em <span class="param">rs2</span>.</td>
-                </tr>
-                <tr class="category-store">
-                    <td class="inst-col"><i><code>S{W|H|B} rs, lab</code></i></td>
-                    <td>Para cada uma das instruções de máquina sw, sh e sb existe uma pseudo-instrução que executa a mesma operação, mas o endereço de memória é calculado com base em um rótulo (<span class="param">lab</span>).</td>
                 </tr>
             </tbody>
         </table>
