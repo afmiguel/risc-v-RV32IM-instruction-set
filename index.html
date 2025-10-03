@@ -296,10 +296,22 @@
                         <td>x8</td><td>x9</td><td>x10</td><td>x11</td><td>x12</td><td>x13</td><td>x14</td><td>x15</td>
                     </tr>
                     <tr>
-                        <td><code class="reg-zero">zero</code></td><td><code class="reg-ra">ra</code></td><td><code class="reg-sp">sp</code></td><td><code class="reg-gp">gp</code></td>
-                        <td><code class="reg-tp">tp</code></td><td><code class="reg-temp">t0</code></td><td><code class="reg-temp">t1</code></td><td><code class="reg-temp">t2</code></td>
-                        <td><code class="reg-saved">s0</code></td><td><code class="reg-saved">s1</code></td><td><code class="reg-args">a0</code></td><td><code class="reg-args">a1</code></td>
-                        <td><code class="reg-args">a2</code></td><td><code class="reg-args">a3</code></td><td><code class="reg-args">a4</code></td><td><code class="reg-args">a5</code></td>
+                        <td><code class="reg-zero" title="Sempre Zero">zero</code></td>
+                        <td><code class="reg-ra" title="Endereço de Retorno (Return Address) - Usado para guardar o endereço de retorno em chamadas de função.">ra</code></td>
+                        <td><code class="reg-sp" title="Ponteiro da Pilha (Stack Pointer) - Aponta para o topo da pilha.">sp</code></td>
+                        <td><code class="reg-gp" title="Ponteiro Global (Global Pointer) - Aponta para a região de dados globais.">gp</code></td>
+                        <td><code class="reg-tp" title="Ponteiro de Thread (Thread Pointer) - Usado em ambientes com múltiplas threads.">tp</code></td>
+                        <td><code class="reg-temp" title="Temporário 0 (Caller-saved) - A função que chama pode usar sem se preocupar em salvar.">t0</code></td>
+                        <td><code class="reg-temp" title="Temporário 1 (Caller-saved)">t1</code></td>
+                        <td><code class="reg-temp" title="Temporário 2 (Caller-saved)">t2</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 0 / Ponteiro de Frame (Saved Register / Frame Pointer) - A função chamada deve salvar seu valor antes de usar.">s0/fp</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 1 (Callee-saved) - A função chamada deve salvar seu valor antes de usar.">s1</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 0 / Valor de Retorno 0">a0</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 1 / Valor de Retorno 1">a1</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 2">a2</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 3">a3</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 4">a4</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 5">a5</code></td>
                     </tr>
                 </tbody>
             </table>
@@ -310,10 +322,22 @@
                         <td>x24</td><td>x25</td><td>x26</td><td>x27</td><td>x28</td><td>x29</td><td>x30</td><td>x31</td>
                     </tr>
                     <tr>
-                        <td><code class="reg-args">a6</code></td><td><code class="reg-args">a7</code></td><td><code class="reg-saved">s2</code></td><td><code class="reg-saved">s3</code></td>
-                        <td><code class="reg-saved">s4</code></td><td><code class="reg-saved">s5</code></td><td><code class="reg-saved">s6</code></td><td><code class="reg-saved">s7</code></td>
-                        <td><code class="reg-saved">s8</code></td><td><code class="reg-saved">s9</code></td><td><code class="reg-saved">s10</code></td><td><code class="reg-saved">s11</code></td>
-                        <td><code class="reg-temp">t3</code></td><td><code class="reg-temp">t4</code></td><td><code class="reg-temp">t5</code></td><td><code class="reg-temp">t6</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 6">a6</code></td>
+                        <td><code class="reg-args" title="Argumento de Função 7">a7</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 2 (Callee-saved)">s2</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 3 (Callee-saved)">s3</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 4 (Callee-saved)">s4</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 5 (Callee-saved)">s5</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 6 (Callee-saved)">s6</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 7 (Callee-saved)">s7</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 8 (Callee-saved)">s8</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 9 (Callee-saved)">s9</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 10 (Callee-saved)">s10</code></td>
+                        <td><code class="reg-saved" title="Registrador Salvo 11 (Callee-saved)">s11</code></td>
+                        <td><code class="reg-temp" title="Temporário 3 (Caller-saved)">t3</code></td>
+                        <td><code class="reg-temp" title="Temporário 4 (Caller-saved)">t4</code></td>
+                        <td><code class="reg-temp" title="Temporário 5 (Caller-saved)">t5</code></td>
+                        <td><code class="reg-temp" title="Temporário 6 (Caller-saved)">t6</code></td>
                     </tr>
                 </tbody>
             </table>
@@ -328,26 +352,26 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><code>mtvec</code></td>
-                    <td><code>mepc</code></td>
-                    <td><code>mcause</code></td>
-                    <td><code>mtval</code></td>
-                    <td><code>mstatus</code></td>
-                    <td><code>mscratch</code></td>
+                    <td><code title="Machine Trap Vector: Endereço base da tabela de tratamento de exceções.">mtvec</code></td>
+                    <td><code title="Machine Exception PC: Armazena o endereço da instrução que causou a exceção.">mepc</code></td>
+                    <td><code title="Machine Cause: Indica a causa da exceção ou interrupção.">mcause</code></td>
+                    <td><code title="Machine Trap Value: Informação adicional sobre a exceção (ex: endereço da falha de acesso).">mtval</code></td>
+                    <td><code title="Machine Status: Contém o estado global do processador (ex: habilitação de interrupções).">mstatus</code></td>
+                    <td><code title="Machine Scratch: Registrador de rascunho para o handler de exceções.">mscratch</code></td>
                 </tr>
             </tbody>
         </table>
         <table class="csr-table">
             <thead>
                 <tr>
-                    <th colspan="6">Campos de mstatus</th>
+                    <th colspan="6">Principais Campos de Status</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><code>mie</code></td>
-                    <td><code>mpie</code></td>
-                    <td><code>mip</code></td>
+                    <td><code title="(Campo do mstatus) Machine Interrupt Enable: Habilita/desabilita globalmente as interrupções.">mie</code></td>
+                    <td><code title="(Campo do mstatus) Machine Previous Interrupt Enable: Salva o valor de MIE ao entrar em uma trap.">mpie</code></td>
+                    <td><code title="(Registrador) Machine Interrupt Pending: Indica quais interrupções estão pendentes.">mip</code></td>
                     <td></td>
                     <td></td>
                     <td></td>
