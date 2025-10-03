@@ -119,24 +119,38 @@
             padding: 8px;
             font-family: 'Fira Code', monospace;
             font-size: 1.28em;
-            border: 1px solid var(--border-color);
+            border: 1px solid #95a5a6 !important;
             text-align: center;
         }
 
-        /* Cores por função dos registradores */
-        .reg-zero { color: #7f8c8d; font-weight: bold; } /* Zero constant - cinza */
-        .reg-ra { color: #e74c3c; font-weight: bold; } /* Return address - vermelho */
-        .reg-sp { color: #9b59b6; font-weight: bold; } /* Stack pointer - roxo */
-        .reg-gp { color: #34495e; font-weight: bold; } /* Global pointer - cinza escuro */
-        .reg-tp { color: #16a085; font-weight: bold; } /* Thread pointer - verde-azulado */
-        .reg-temp { color: #3498db; font-weight: bold; } /* Temporaries (t0-t6) - azul */
-        .reg-saved { color: #27ae60; font-weight: bold; } /* Saved registers (s0-s11) - verde */
-        .reg-args { color: #e67e22; font-weight: bold; } /* Function arguments (a0-a7) - laranja */
+        /* Cores por função dos registradores - aplicadas nas células (td) - tons pastéis suaves */
+        .reg-zero { background-color: #d5dbdb; } /* Zero constant - cinza pastel */
+        .reg-ra { background-color: #fadbd8; } /* Return address - vermelho pastel */
+        .reg-sp { background-color: #e8daef; } /* Stack pointer - roxo pastel */
+        .reg-gp { background-color: #aeb6bf; } /* Global pointer - cinza médio pastel */
+        .reg-tp { background-color: #a3e4d7; } /* Thread pointer - verde-azulado pastel */
+        .reg-temp { background-color: #d6eaf8; } /* Temporaries (t0-t6) - azul pastel */
+        .reg-saved { background-color: #d5f4e6; } /* Saved registers (s0-s11) - verde pastel */
+        .reg-args { background-color: #fae5d3; } /* Function arguments (a0-a7) - laranja pastel */
 
         .register-tables-container {
             display: flex;
             flex-direction: column;
             gap: 1em;
+        }
+
+        .register-table td {
+            color: #000000;
+            font-family: 'Fira Code', monospace;
+            font-weight: bold;
+        }
+
+        .register-table code {
+            background-color: transparent;
+            color: #000000;
+            border: none;
+            padding: 0;
+            font-weight: bold;
         }
 
         .csr-table {
@@ -300,52 +314,52 @@
             <table class="register-table">
                 <tbody>
                     <tr>
-                        <td>x0</td><td>x1</td><td>x2</td><td>x3</td><td>x4</td><td>x5</td><td>x6</td><td>x7</td>
-                        <td>x8</td><td>x9</td><td>x10</td><td>x11</td><td>x12</td><td>x13</td><td>x14</td><td>x15</td>
+                        <td class="reg-zero">x0</td><td class="reg-ra">x1</td><td class="reg-sp">x2</td><td class="reg-gp">x3</td><td class="reg-tp">x4</td><td class="reg-temp">x5</td><td class="reg-temp">x6</td><td class="reg-temp">x7</td>
+                        <td class="reg-saved">x8</td><td class="reg-saved">x9</td><td class="reg-args">x10</td><td class="reg-args">x11</td><td class="reg-args">x12</td><td class="reg-args">x13</td><td class="reg-args">x14</td><td class="reg-args">x15</td>
                     </tr>
                     <tr>
-                        <td><code class="reg-zero" title="Sempre Zero">zero</code></td>
-                        <td><code class="reg-ra" title="Endereço de Retorno (Return Address) - Usado para guardar o endereço de retorno em chamadas de função.">ra</code></td>
-                        <td><code class="reg-sp" title="Ponteiro da Pilha (Stack Pointer) - Aponta para o topo da pilha.">sp</code></td>
-                        <td><code class="reg-gp" title="Ponteiro Global (Global Pointer) - Aponta para a região de dados globais.">gp</code></td>
-                        <td><code class="reg-tp" title="Ponteiro de Thread (Thread Pointer) - Usado em ambientes com múltiplas threads.">tp</code></td>
-                        <td><code class="reg-temp" title="Temporário 0 (Caller-saved) - A função que chama pode usar sem se preocupar em salvar.">t0</code></td>
-                        <td><code class="reg-temp" title="Temporário 1 (Caller-saved)">t1</code></td>
-                        <td><code class="reg-temp" title="Temporário 2 (Caller-saved)">t2</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 0 / Ponteiro de Frame (Saved Register / Frame Pointer) - A função chamada deve salvar seu valor antes de usar.">s0/fp</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 1 (Callee-saved) - A função chamada deve salvar seu valor antes de usar.">s1</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 0 / Valor de Retorno 0">a0</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 1 / Valor de Retorno 1">a1</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 2">a2</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 3">a3</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 4">a4</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 5">a5</code></td>
+                        <td class="reg-zero"><code title="Sempre Zero">zero</code></td>
+                        <td class="reg-ra"><code title="Endereço de Retorno (Return Address) - Usado para guardar o endereço de retorno em chamadas de função.">ra</code></td>
+                        <td class="reg-sp"><code title="Ponteiro da Pilha (Stack Pointer) - Aponta para o topo da pilha.">sp</code></td>
+                        <td class="reg-gp"><code title="Ponteiro Global (Global Pointer) - Aponta para a região de dados globais.">gp</code></td>
+                        <td class="reg-tp"><code title="Ponteiro de Thread (Thread Pointer) - Usado em ambientes com múltiplas threads.">tp</code></td>
+                        <td class="reg-temp"><code title="Temporário 0 (Caller-saved) - A função que chama pode usar sem se preocupar em salvar.">t0</code></td>
+                        <td class="reg-temp"><code title="Temporário 1 (Caller-saved)">t1</code></td>
+                        <td class="reg-temp"><code title="Temporário 2 (Caller-saved)">t2</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 0 / Ponteiro de Frame (Saved Register / Frame Pointer) - A função chamada deve salvar seu valor antes de usar.">s0/fp</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 1 (Callee-saved) - A função chamada deve salvar seu valor antes de usar.">s1</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 0 / Valor de Retorno 0">a0</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 1 / Valor de Retorno 1">a1</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 2">a2</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 3">a3</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 4">a4</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 5">a5</code></td>
                     </tr>
                 </tbody>
             </table>
             <table class="register-table">
                 <tbody>
                     <tr>
-                        <td>x16</td><td>x17</td><td>x18</td><td>x19</td><td>x20</td><td>x21</td><td>x22</td><td>x23</td>
-                        <td>x24</td><td>x25</td><td>x26</td><td>x27</td><td>x28</td><td>x29</td><td>x30</td><td>x31</td>
+                        <td class="reg-args">x16</td><td class="reg-args">x17</td><td class="reg-saved">x18</td><td class="reg-saved">x19</td><td class="reg-saved">x20</td><td class="reg-saved">x21</td><td class="reg-saved">x22</td><td class="reg-saved">x23</td>
+                        <td class="reg-saved">x24</td><td class="reg-saved">x25</td><td class="reg-saved">x26</td><td class="reg-saved">x27</td><td class="reg-temp">x28</td><td class="reg-temp">x29</td><td class="reg-temp">x30</td><td class="reg-temp">x31</td>
                     </tr>
                     <tr>
-                        <td><code class="reg-args" title="Argumento de Função 6">a6</code></td>
-                        <td><code class="reg-args" title="Argumento de Função 7">a7</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 2 (Callee-saved)">s2</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 3 (Callee-saved)">s3</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 4 (Callee-saved)">s4</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 5 (Callee-saved)">s5</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 6 (Callee-saved)">s6</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 7 (Callee-saved)">s7</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 8 (Callee-saved)">s8</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 9 (Callee-saved)">s9</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 10 (Callee-saved)">s10</code></td>
-                        <td><code class="reg-saved" title="Registrador Salvo 11 (Callee-saved)">s11</code></td>
-                        <td><code class="reg-temp" title="Temporário 3 (Caller-saved)">t3</code></td>
-                        <td><code class="reg-temp" title="Temporário 4 (Caller-saved)">t4</code></td>
-                        <td><code class="reg-temp" title="Temporário 5 (Caller-saved)">t5</code></td>
-                        <td><code class="reg-temp" title="Temporário 6 (Caller-saved)">t6</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 6">a6</code></td>
+                        <td class="reg-args"><code title="Argumento de Função 7">a7</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 2 (Callee-saved)">s2</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 3 (Callee-saved)">s3</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 4 (Callee-saved)">s4</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 5 (Callee-saved)">s5</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 6 (Callee-saved)">s6</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 7 (Callee-saved)">s7</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 8 (Callee-saved)">s8</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 9 (Callee-saved)">s9</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 10 (Callee-saved)">s10</code></td>
+                        <td class="reg-saved"><code title="Registrador Salvo 11 (Callee-saved)">s11</code></td>
+                        <td class="reg-temp"><code title="Temporário 3 (Caller-saved)">t3</code></td>
+                        <td class="reg-temp"><code title="Temporário 4 (Caller-saved)">t4</code></td>
+                        <td class="reg-temp"><code title="Temporário 5 (Caller-saved)">t5</code></td>
+                        <td class="reg-temp"><code title="Temporário 6 (Caller-saved)">t6</code></td>
                     </tr>
                 </tbody>
             </table>
